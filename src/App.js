@@ -2,6 +2,17 @@ import React, { Component } from 'react';
 import 'semantic-ui-css/semantic.min.css';
 import { Container, Grid, Button, Divider } from 'semantic-ui-react';
 import { Route, BrowserRouter as Router, Link, Switch } from 'react-router-dom'
+import { connect } from 'react-redux';
+
+import { simpleAction } from './actions/simpleAction'
+
+const mapStateToProps = state => ({
+  ...state
+})
+
+const mapDispatchToProps = dispatch => ({
+  simpleAction: () => dispatch(simpleAction())
+})
 
 export const BACKEND = process.env.REACT_APP_BACKEND || 'INSERT BACKEND URL HERE';
 
@@ -12,7 +23,7 @@ export const PATHS = {
   // TODO: include more paths here
 }
 
-export default class App extends Component {
+class App extends Component {
   constructor(){
     super();
     this.state = {
@@ -41,11 +52,23 @@ export default class App extends Component {
     window.removeEventListener('beforeunload', this.componentCleanup);
   }
 
+  simpleAction = (event) => {
+    this.props.simpleAction();
+  }
+
   render() {
     return (
       <div>
+        <pre>
+        {
+          JSON.stringify(this.props)
+        }
+        </pre>
+        <button onClick={this.simpleAction}>Test redux action</button>
         This is the index page... Time to get to work!
       </div>
     )
   }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(App)
