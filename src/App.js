@@ -22,7 +22,10 @@ const compName = 'App_LS';
 
 export const PATHS = {
   root: "/",
-  login: "login"
+  login: "/login",
+  studentSignUp: "/student/signUp",
+  staffSignUp: "/staff/signUp",
+  staffDashboard: "/staff/dashboard"
 }
 
 class App extends Component {
@@ -78,6 +81,26 @@ class App extends Component {
           loggedIn={this.state.loggedIn}
           logout={this.logout}
         />
+        <Container>
+          <Grid centered>
+            <Router>
+              <Switch>
+                <Route exact path={PATHS.root} render={() =>
+                  <div>Login page</div>
+                }/>
+                <Route exact path={PATHS.studentSignUp} render={() =>
+                  <div>Student Sign Up page</div>
+                }/>
+                <Route exact path={PATHS.staffSignUp} render={() =>
+                  <div>Staff Sign Up page</div>
+                }/>
+                <Route exact path={PATHS.staffDashboard} render={() =>
+                  <div>Staff Dashboard</div>
+                }/>
+              </Switch>
+            </Router>
+          </Grid>
+        </Container>
       </div>
     )
   }
