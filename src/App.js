@@ -3,6 +3,8 @@ import 'semantic-ui-css/semantic.min.css';
 import { Container, Grid, Button, Divider } from 'semantic-ui-react';
 import { Route, BrowserRouter as Router, Link, Switch } from 'react-router-dom'
 import { connect } from 'react-redux';
+import Header from './components/Header';
+
 
 import { simpleAction } from './actions/simpleAction'
 
@@ -20,15 +22,18 @@ const compName = 'App_LS';
 
 export const PATHS = {
   root: "/",
-  // TODO: include more paths here
+  login: "login"
 }
 
 class App extends Component {
   constructor(){
     super();
     this.state = {
+      loggedIn: true
     };
     this.componentCleanup = this.componentCleanup.bind(this);
+    this.login = this.login.bind(this);
+    this.logout = this.logout.bind(this);
   }
 
   componentCleanup() {
@@ -52,20 +57,27 @@ class App extends Component {
     window.removeEventListener('beforeunload', this.componentCleanup);
   }
 
-  simpleAction = (event) => {
-    this.props.simpleAction();
+  login() {
+    //TODO: should redirect to index path
+    //TODO: clear cookie
+    this.setState({
+      loggedIn: true
+    });
+  }
+
+  logout() {
+    this.setState({
+      loggedIn: false
+    });
   }
 
   render() {
     return (
       <div>
-        <pre>
-        {
-          JSON.stringify(this.props)
-        }
-        </pre>
-        <button onClick={this.simpleAction}>Test redux action</button>
-        This is the index page... Time to get to work!
+        <Header
+          loggedIn={this.state.loggedIn}
+          logout={this.logout}
+        />
       </div>
     )
   }
