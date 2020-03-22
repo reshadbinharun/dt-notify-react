@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Menu, Segment } from 'semantic-ui-react'
 import Messaging from './Messaging'
+import Management from './Management'
 
 const compName = 'StaffView_LS';
 
@@ -51,7 +52,7 @@ export default class StaffView extends Component {
             case MESSAGING:
                 return <Messaging/>
             case STUDENT_MANAGEMENT:
-                return <div>Student Management</div>
+                return <Management/>
             case STUDENT_TRACKING:
                 return <div>Student Tracking</div>
             case STAFF_MANAGEMENT:

@@ -111,8 +111,8 @@ export default class Messaging extends React.Component {
                     <Form>
                         <Grid.Row>
                             <Message
-                                style={{'width': '80%', 'margin': "20px 0 10px 0"}}
-                                header={`Compose message to send to students by grade`}
+                                style={{'margin': "20px 0 10px 0"}}
+                                content={`Compose message to send to students by grade`}
                             />
                         </Grid.Row>
                         <Grid.Row>
