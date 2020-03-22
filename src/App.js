@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import Header from './components/Header';
 import LoginForm from './components/LoginForm';
 import StaffView from './components/StaffView';
+import Signup from './components/Signup';
 
 
 import { simpleAction } from './actions/simpleAction'
@@ -129,11 +130,15 @@ class App extends Component {
               </div>
             }/>
             <Route exact path={PATHS.studentSignUp} render={() => 
-              <div>TODO: Add Student Sign Up Form here</div>
+                <Signup
+                  isStaff={false}
+                />
               }
             />
             <Route exact path={PATHS.staffSignUp} render={() => 
-              <div>TODO: Add Staff Sign Up Form here</div>
+                <Signup
+                  isStaff={true}
+                />
               }
             />
           </Switch>
