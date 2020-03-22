@@ -1,7 +1,7 @@
 import React from 'react';
 import 'semantic-ui-css/semantic.min.css';
 import { Form, Button, Icon, Message, Grid } from 'semantic-ui-react';
-import { BACKEND, SCHOOL_NAME } from "../App";
+import { SCHOOL_NAME } from "../App";
 import { makeCall } from "../apis";
 
 let fieldStyle = {

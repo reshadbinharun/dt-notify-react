@@ -1,3 +1,5 @@
+import { BACKEND } from "./App";
+
 const makeCall = async (payload, api, method) => {
     var headers = new Headers();
     headers.append('Content-Type', 'application/json');
