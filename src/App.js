@@ -34,7 +34,7 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      loggedIn: false,
+      loggedIn: true,
       isStaff: false,
       staffDetails: {},
       // TODO: add state to hold student details if needed
@@ -94,7 +94,7 @@ class App extends Component {
     let loggedInView =
       this.state.isStaff ? 
         <StaffView
-          payload = {this.state.mentorPayload}
+          payload = {this.state.staffDetails}
         /> : null
         // TODO: add StudentView if needed
     let navigation =
