@@ -1,6 +1,6 @@
 import { BACKEND } from "./App";
 
-const makeCall = async (payload, api, method) => {
+export const makeCall = async (payload, api, method) => {
     var headers = new Headers();
     headers.append('Content-Type', 'application/json');
     headers.append('Accept', 'application/json');
@@ -11,9 +11,9 @@ const makeCall = async (payload, api, method) => {
         body: JSON.stringify(payload)
     }).then(async res => {
         let resolvedRes = await res;
-        return new Promise((resolve, reject) => {
-            if (resolvedRes.status == 200) {
-                resJson = await resolvedRes.json()
+        return new Promise(async(resolve, reject) => {
+            if (resolvedRes.status === 200) {
+                const resJson = await resolvedRes.json()
                 return resolve(resJson);
             } else {
                 return reject({

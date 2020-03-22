@@ -35,7 +35,8 @@ export default class LoginForm extends React.Component {
             staffLoginLoading: false,
         }
         this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit= this.handleSubmit.bind(this);
+        this.handleSubmitAsStaff = this.handleSubmitAsStaff.bind(this);
+        this.handleSubmitAsStudent = this.handleSubmitAsStudent.bind(this);
         this.renderIncorrectCredentialsMessage = this.renderIncorrectCredentialsMessage.bind(this);
         this.componentCleanup = this.componentCleanup.bind(this);
     }
@@ -44,51 +45,54 @@ export default class LoginForm extends React.Component {
         sessionStorage.setItem(compName, JSON.stringify(this.state));
     }
 
-    handleSubmit(e, isStaff) {
-        e.preventDefault();
-        if (isStaff) {
-            this.setState({staffLoginLoading: true});
-        } else {
-            this.setState({studentLoginLoading: true});
-        }
+    handleSubmitAsStudent(e) {
+        e.preventDefault()
+        this.setState({studentLoginLoading: true});
         const payload = {
             email: this.state.email,
             password: this.state.password
         };
         makeCall(payload, '/login', 'post').then(result => {
             if (result.error) {
-                if (isStaff) {
-                    this.setState({
-                        incorrectCredentials: true,
-                        error: result.error ? result.error : `Your login was unsuccessful.`,
-                        staffLoginLoading: false
-                    });
-                } else {
-                    this.setState({
-                        incorrectCredentials: true,
-                        error: result.error ? result.error : `Your login was unsuccessful.`,
-                        studentLoginLoading: false
-                    });
-                }   
+                this.setState({
+                    incorrectCredentials: true,
+                    error: result.error ? result.error : `Your login was unsuccessful.`,
+                    studentLoginLoading: false
+                });
             } else {
-                if (isStaff) {
-                    this.setState({
-                        incorrectCredentials: false,
-                        staffLoginLoading: false,
-                    },() => {
-                        this.props.login()
-                        this.props.liftPayload(result, true);
-                    });
-                } else {
-                    this.setState({
-                        incorrectCredentials: false,
-                        studentLoginLoading: false,
-                    },() => {
-                        this.props.login()
-                        this.props.liftPayload(result, true);
-                    });
-                }
-                
+                this.setState({
+                    incorrectCredentials: false,
+                    studentLoginLoading: false,
+                },() => {
+                    this.props.login()
+                    this.props.liftPayload(result, true);
+                });
+            }
+        });
+    }
+
+    handleSubmitAsStaff(e) {
+        e.preventDefault()
+        this.setState({staffLoginLoading: true});
+        const payload = {
+            email: this.state.email,
+            password: this.state.password
+        };
+        makeCall(payload, '/login', 'post').then(result => {
+            if (result.error) {
+                this.setState({
+                    incorrectCredentials: true,
+                    error: result.error ? result.error : `Your login was unsuccessful.`,
+                    staffLoginLoading: false
+                }); 
+            } else {
+                this.setState({
+                    incorrectCredentials: false,
+                    staffLoginLoading: false,
+                },() => {
+                    this.props.login()
+                    this.props.liftPayload(result, true);
+                });
             }
         });
     }
@@ -168,7 +172,7 @@ export default class LoginForm extends React.Component {
                         <Grid.Column>
                             <Button
                                 style={buttonStyle}
-                                onClick={this.handleSubmit(e, false)}
+                                onClick={this.handleSubmitAsStudent}
                                 loading={this.state.studentLoginLoading}
                             >
                                 <Icon name="unlock"/>
@@ -178,7 +182,7 @@ export default class LoginForm extends React.Component {
                         <Grid.Column>
                             <Button 
                                 style={buttonStyle}                        
-                                onClick={this.handleSubmit(e, true)}
+                                onClick={this.handleSubmitAsStaff}
                                 loading={this.state.staffLoginLoading}
                             >
                                 <Icon name="unlock"/>
