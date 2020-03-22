@@ -3,10 +3,6 @@ import {Grid, Button} from 'semantic-ui-react';
 import 'semantic-ui-css/semantic.min.css';
 import {primary, secondary} from "../colors";
 
-const style = {
-    'paddingTop': '50px'
-}
-
 /*
 props:
 - loggedIn: boolean
@@ -23,7 +19,6 @@ export default class Header extends Component {
         return (
         <Grid.Column 
             width = {6}
-            style = {style}
         >
             <Button 
                 style={
@@ -47,7 +42,12 @@ export default class Header extends Component {
     }
     render () {
         return (
-            <Grid columns={3}>
+            <Grid 
+                style={{
+                    'margin-bottom': '20px'
+                }}
+                columns={3}
+            >
                 <Grid.Column width = {5}>
                     <div></div>
                 </Grid.Column>
