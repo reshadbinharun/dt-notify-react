@@ -4,6 +4,8 @@ import { Container, Grid, Button, Divider } from 'semantic-ui-react';
 import { Route, BrowserRouter as Router, Link, Switch } from 'react-router-dom'
 import { connect } from 'react-redux';
 import Header from './components/Header';
+import LoginForm from './components/LoginForm';
+import StaffView from './components/StaffView';
 
 
 import { simpleAction } from './actions/simpleAction'
@@ -17,26 +19,29 @@ const mapDispatchToProps = dispatch => ({
 })
 
 export const BACKEND = process.env.REACT_APP_BACKEND || 'INSERT BACKEND URL HERE';
+export const SCHOOL_NAME = process.env.REACT_APP_SCHOOL || 'Dhanmondi Tutorial';
 
 const compName = 'App_LS';
 
 export const PATHS = {
   root: "/",
-  login: "/login",
   studentSignUp: "/student/signUp",
-  staffSignUp: "/staff/signUp",
-  staffDashboard: "/staff/dashboard"
+  staffSignUp: "/staff/signUp"
 }
 
 class App extends Component {
-  constructor(){
+  constructor() {
     super();
     this.state = {
-      loggedIn: true
+      loggedIn: false,
+      isStaff: false,
+      staffDetails: {},
+      // TODO: add state to hold student details if needed
     };
     this.componentCleanup = this.componentCleanup.bind(this);
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
+    this.renderLogin = this.renderLogin.bind(this);
   }
 
   componentCleanup() {
@@ -74,6 +79,70 @@ class App extends Component {
     });
   }
 
+  liftPayload(details, isStaff) {
+    if (isStaff) {
+      this.setState({
+        isStaff: true,
+        staffDetails: details
+      });
+    }
+    // TODO: Add student details to state/store if needed
+  }
+
+  renderLogin() {
+    let loggedInView =
+      this.state.isStaff ? 
+        <StaffView
+          payload = {this.state.mentorPayload}
+        /> : null
+        // TODO: add StudentView if needed
+    let navigation =
+    <Grid centered>
+      <Router>
+        <div>
+          <Switch>
+            <Route exact path={PATHS.root} render={(props) => 
+              <div>
+                <div>
+                  <Grid centered rows={1}>
+                    <Grid.Row left>
+                      <Button
+                      >
+                        <Link to={PATHS.studentSignUp}>
+                          Sign up as Student
+                        </Link>
+                      </Button>
+                      <Button
+                      >
+                        <Link to={PATHS.staffSignUp}>
+                          Sign up as Staff
+                        </Link>
+                      </Button>
+                    </Grid.Row>
+                  </Grid>
+                </div>
+                <Divider/>
+                <LoginForm
+                  login = {this.login}
+                  liftPayload = {this.liftPayload}
+                />
+              </div>
+            }/>
+            <Route exact path={PATHS.studentSignUp} render={() => 
+              <div>TODO: Add Student Sign Up Form here</div>
+              }
+            />
+            <Route exact path={PATHS.staffSignUp} render={() => 
+              <div>TODO: Add Staff Sign Up Form here</div>
+              }
+            />
+          </Switch>
+        </div>
+      </Router>
+    </Grid>
+    return this.state.loggedIn ? loggedInView : navigation;
+  }
+
   render() {
     return (
       <div>
@@ -82,24 +151,7 @@ class App extends Component {
           logout={this.logout}
         />
         <Container>
-          <Grid centered>
-            <Router>
-              <Switch>
-                <Route exact path={PATHS.root} render={() =>
-                  <div>Login page</div>
-                }/>
-                <Route exact path={PATHS.studentSignUp} render={() =>
-                  <div>Student Sign Up page</div>
-                }/>
-                <Route exact path={PATHS.staffSignUp} render={() =>
-                  <div>Staff Sign Up page</div>
-                }/>
-                <Route exact path={PATHS.staffDashboard} render={() =>
-                  <div>Staff Dashboard</div>
-                }/>
-              </Switch>
-            </Router>
-          </Grid>
+          {this.renderLogin()}
         </Container>
       </div>
     )
