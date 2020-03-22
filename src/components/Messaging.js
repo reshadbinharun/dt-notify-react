@@ -90,7 +90,7 @@ export default class Messaging extends React.Component {
                     }, () => {
                         swal({
                             title: "Success!",
-                            text: "You\'ve successfully sent emails to the grades checked",
+                            text: "You've successfully sent emails to the grades checked",
                             icon: "success",
                         });
                     });
