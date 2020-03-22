@@ -53,7 +53,7 @@ export default class LoginForm extends React.Component {
             password: this.state.password
         };
         makeCall(payload, '/login', 'post').then(result => {
-            if (result.error) {
+            if (!result || result.error) {
                 this.setState({
                     incorrectCredentials: true,
                     error: result.error ? result.error : `Your login was unsuccessful.`,
@@ -79,7 +79,7 @@ export default class LoginForm extends React.Component {
             password: this.state.password
         };
         makeCall(payload, '/login', 'post').then(result => {
-            if (result.error) {
+            if (!result || result.error) {
                 this.setState({
                     incorrectCredentials: true,
                     error: result.error ? result.error : `Your login was unsuccessful.`,

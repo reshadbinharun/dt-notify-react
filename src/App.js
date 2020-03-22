@@ -35,7 +35,7 @@ class App extends Component {
     super();
     this.state = {
       loggedIn: true,
-      isStaff: false,
+      isStaff: true,
       staffDetails: {},
       // TODO: add state to hold student details if needed
     };

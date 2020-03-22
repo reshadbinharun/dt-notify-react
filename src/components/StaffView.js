@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Menu, Segment } from 'semantic-ui-react'
+import Messaging from './Messaging'
 
 const compName = 'StaffView_LS';
 
@@ -48,7 +49,7 @@ export default class StaffView extends Component {
     renderNavSelection() {
         switch(this.state.activeItem) {
             case MESSAGING:
-                return <div>Messaging</div>
+                return <Messaging/>
             case STUDENT_MANAGEMENT:
                 return <div>Student Management</div>
             case STUDENT_TRACKING:
