@@ -3,6 +3,8 @@ import { Grid, Message, Card, Form, Button, TextArea, Icon } from 'semantic-ui-r
 import { makeCall } from '../apis';
 import swal from "sweetalert";
 
+const compName = 'Management_LS';
+
 export default class Messaging extends React.Component {
     constructor() {
         super();
@@ -17,6 +19,27 @@ export default class Messaging extends React.Component {
         this.generateRequests = this.generateRequests.bind(this);
         this.handleApproval = this.handleApproval.bind(this);
         this.handleReject = this.handleReject.bind(this);
+    }
+
+    componentCleanup() {
+        sessionStorage.setItem(compName, JSON.stringify(this.state));
+    }
+
+    componentDidMount() {
+        window.addEventListener('beforeunload', this.componentCleanup);
+        const persistState = sessionStorage.getItem(compName);
+            if (persistState) {
+            try {
+                this.setState(JSON.parse(persistState));
+            } catch (e) {
+                console.log("Could not get fetch state from local storage for", compName);
+            }
+        }
+    }
+
+    componentWillUnmount() {
+        this.componentCleanup();
+        window.removeEventListener('beforeunload', this.componentCleanup);
     }
 
     handleChange(e) {
