@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Menu, Segment } from 'semantic-ui-react'
 import Messaging from './Messaging'
 import Management from './Management'
+import Tracking from './Tracking'
 
 const compName = 'StaffView_LS';
 
@@ -16,8 +17,7 @@ export default class StaffView extends Component {
     constructor(props){
         super(props);
         this.state = {
-            activeItem: MESSAGING,
-            data: {},
+            activeItem: MESSAGING
         }
     }
 
@@ -35,9 +35,6 @@ export default class StaffView extends Component {
                 console.log("Could not get fetch state from local storage for", compName);
             }
         }
-        this.setState({
-            data: this.props.payload.mentee
-        })
     }
 
     componentWillUnmount() {
@@ -54,7 +51,7 @@ export default class StaffView extends Component {
             case STUDENT_MANAGEMENT:
                 return <Management/>
             case STUDENT_TRACKING:
-                return <div>Student Tracking</div>
+                return <Tracking/>
             case STAFF_MANAGEMENT:
                 return <div>Staff Management</div>
             case STAFF_TRACKING:
