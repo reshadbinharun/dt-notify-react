@@ -1,5 +1,5 @@
 import React from 'react'
-import { Grid, Message, Card, Form, Button, TextArea, Icon } from 'semantic-ui-react'
+import { Grid, Message, Card, Form, Button, TextArea, Icon, Table } from 'semantic-ui-react'
 import { makeCall } from '../apis';
 import swal from "sweetalert";
 
@@ -156,34 +156,78 @@ export default class Messaging extends React.Component {
     }
 
     generateRequests() {
-        const items = this.props.isStudentView ? this.state.pendingStudents : this.state.pendingStaff
-        return items && items.map(member => {
-            return (
-                <Card style={{'width': '100%'}}>
-                    <Grid>
-                        <Grid.Column width={this.props.isStudentView ? 4 : 8}
-                            style={{'margin': '2px 0 2px 0'}}
-                        >
-                            <b>{member.name}</b>
-                        </Grid.Column>
-                        {
-                            this.props.isStudentView ? 
-                            <Grid.Column>
-                                <div> | </div>
-                            </Grid.Column> :
-                            null
-                        }
-                        {
-                            this.props.isStudentView ?
-                                <Grid.Column width={4}
-                                    style={{'margin': '2px 0 2px 0'}}
+        if (this.props.isStudentView) {
+            const items = this.state.pendingStudents;
+            const tableHeader = 
+                <Table.Header>
+                    <Table.Row>
+                    <Table.HeaderCell>Name</Table.HeaderCell>
+                    <Table.HeaderCell>Grade</Table.HeaderCell>
+                    <Table.HeaderCell>Email</Table.HeaderCell>
+                    <Table.HeaderCell>Approval</Table.HeaderCell>
+                    <Table.HeaderCell>Rejection</Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
+            
+            const tableBody = 
+                <Table.Body>
+                    {items.map(member => {
+                        return (
+                        <Table.Row>
+                            <Table.Cell>{member.name}</Table.Cell>
+                            <Table.Cell>{member.grade}</Table.Cell>
+                            <Table.Cell>{member.email}</Table.Cell>
+                            <Table.Cell>
+                                <Button
+                                    disabled={this.state.sendingRequest}
+                                    style={{'height':'80%', 'margin': '2px 0 2px 0'}}
+                                    onClick={() => this.handleApproval(member.email)}
                                 >
-                                    <div> {member.grade} Grade </div>
-                                </Grid.Column>
-                            :
-                            null
-                        }
-                        <Grid.Column width={3}>
+                                    Approve
+                                </Button>
+                            </Table.Cell>
+                            <Table.Cell>
+                                <Button
+                                    disabled={this.state.sendingRequest}
+                                    style={{'height':'80%', 'margin': '2px 0 2px 0'}}
+                                    onClick={() => this.handleReject(member.email)}
+                                >
+                                    Reject
+                                </Button>
+                            </Table.Cell>
+                        </Table.Row>
+                        )
+                    })}
+                </Table.Body>
+          return (
+            <Table celled>
+                {tableHeader}
+                {tableBody}
+                <Table.Footer style={{margin: '10px 0 10px 0'}}>
+                    {/* TODO: Add pagination for when there are many records */}
+                </Table.Footer>
+            </Table> 
+          )
+        }
+        const items = this.state.pendingStaff;
+        const tableHeader = 
+            <Table.Header>
+                <Table.Row>
+                <Table.HeaderCell>Name</Table.HeaderCell>
+                <Table.HeaderCell>Email</Table.HeaderCell>
+                <Table.HeaderCell>Approval</Table.HeaderCell>
+                <Table.HeaderCell>Rejection</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+        
+        const tableBody = 
+            <Table.Body>
+                {items.map(member => {
+                    return (
+                    <Table.Row>
+                        <Table.Cell>{member.name}</Table.Cell>
+                        <Table.Cell>{member.email}</Table.Cell>
+                        <Table.Cell>
                             <Button
                                 disabled={this.state.sendingRequest}
                                 style={{'height':'80%', 'margin': '2px 0 2px 0'}}
@@ -191,8 +235,8 @@ export default class Messaging extends React.Component {
                             >
                                 Approve
                             </Button>
-                        </Grid.Column>
-                        <Grid.Column width={3}>
+                        </Table.Cell>
+                        <Table.Cell>
                             <Button
                                 disabled={this.state.sendingRequest}
                                 style={{'height':'80%', 'margin': '2px 0 2px 0'}}
@@ -200,11 +244,20 @@ export default class Messaging extends React.Component {
                             >
                                 Reject
                             </Button>
-                        </Grid.Column>
-                    </Grid>
-                </Card>
-            )
-        })
+                        </Table.Cell>
+                    </Table.Row>
+                    )
+                })}
+            </Table.Body>
+        return (
+        <Table celled>
+            {tableHeader}
+            {tableBody}
+            <Table.Footer style={{margin: '10px 0 10px 0'}}>
+                {/* TODO: Add pagination for when there are many records */}
+            </Table.Footer>
+        </Table>
+        )
     }
 
     render() {
