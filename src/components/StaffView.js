@@ -49,13 +49,21 @@ export default class StaffView extends Component {
             case MESSAGING:
                 return <Messaging/>
             case STUDENT_MANAGEMENT:
-                return <Management/>
+                return <Management
+                    isStudentView={true}
+                />
             case STUDENT_TRACKING:
-                return <Tracking/>
+                return <Tracking
+                    isStudentView={true}
+                />
             case STAFF_MANAGEMENT:
-                return <div>Staff Management</div>
+                return <Management
+                    isStudentView={false}
+                />
             case STAFF_TRACKING:
-                return <div>Staff Tracking</div>
+                return <Tracking
+                isStudentView={false}
+            />
             default:
                 return null
         }

@@ -5,6 +5,10 @@ import swal from "sweetalert";
 
 const compName = 'Management_LS';
 
+/*
+props:
+- isStudentView: boolean
+*/
 export default class Messaging extends React.Component {
     constructor() {
         super();
@@ -12,6 +16,7 @@ export default class Messaging extends React.Component {
             emailString: '',
             // TODO: remove mock data later
             pendingStudents: [{email: 'ree@gmail.com', name: 'Ree', grade: '9th'},{email: 'ree@gmail.com', name: 'Ree 2', grade: '8th'}],
+            pendingStaff: [{email: 'teacher@gmail.com', name: 'Teach Ree'},{email: 'teacher2@gmail.com', name: 'Ree 2'}],
             sendingRequest: false
         }
         this.handleChange = this.handleChange.bind(this);
@@ -56,14 +61,15 @@ export default class Messaging extends React.Component {
         const payload = {
             emails: emailsArr
         };
-        makeCall(payload, '/invite/students', 'post').then(result => {
+        const endPoint = this.props.isStudentView ? '/invite/students' : '/invite/staff'
+        makeCall(payload, endPoint, 'post').then(result => {
             if (!result || result.error) {
                 this.setState({
                     sendingRequest: false
                 }, () => {
                     swal({
                         title: "Error!",
-                        text: "There was an error inviting the student, please try again.",
+                        text: `There was an error inviting the ${this.props.isStudentView ? 'student' : 'staff'}, please try again.`,
                         icon: "error",
                     });
                 });
@@ -74,7 +80,7 @@ export default class Messaging extends React.Component {
                 }, () => {
                     swal({
                         title: "Success!",
-                        text: "You've successfully invited all students!",
+                        text: `You've successfully invited all ${this.props.isStudentView ? 'students' : 'staff'}!`,
                         icon: "success",
                     });
                 });
@@ -88,14 +94,15 @@ export default class Messaging extends React.Component {
             approved: true,
             email: email
         };
-        makeCall(payload, '/approve/student', 'post').then(result => {
+        const endPoint = this.props.isStudentView ? '/approve/student' : '/approve/staff'
+        makeCall(payload, endPoint, 'post').then(result => {
             if (!result || result.error) {
                 this.setState({
                     sendingRequest: false
                 }, () => {
                     swal({
                         title: "Error!",
-                        text: "There was an error approving the student, please try again.",
+                        text: `There was an error approving the ${this.props.isStudentView ? 'student' : 'staff'}, please try again.`,
                         icon: "error",
                     });
                 });
@@ -105,7 +112,7 @@ export default class Messaging extends React.Component {
                 }, () => {
                     swal({
                         title: "Success!",
-                        text: "You've successfully approved the students!",
+                        text: `You've successfully approved the ${this.props.isStudentView ? 'students' : 'staff'}!`,
                         icon: "success",
                     });
                 });
@@ -118,14 +125,15 @@ export default class Messaging extends React.Component {
         const payload = {
             email: email
         };
-        makeCall(payload, '/students/delete', 'post').then(result => {
+        const endPoint = this.props.isStudentView ? '/students/delete' : '/staff/delete'
+        makeCall(payload, endPoint, 'post').then(result => {
             if (!result || result.error) {
                 this.setState({
                     sendingRequest: false
                 }, () => {
                     swal({
                         title: "Error!",
-                        text: "There was an error rejecting the student, please try again.",
+                        text: `There was an error rejecting the ${this.props.isStudentView ? 'student' : 'staff'}, please try again.`,
                         icon: "error",
                     }).then(() => {
                         window.location.reload();
@@ -137,7 +145,7 @@ export default class Messaging extends React.Component {
                 }, () => {
                     swal({
                         title: "Success!",
-                        text: "You've successfully rejected the student!",
+                        text: `You've successfully rejected the ${this.props.isStudentView ? 'student' : 'staff'}!`,
                         icon: "success",
                     }).then(() => {
                         window.location.reload();
@@ -148,28 +156,38 @@ export default class Messaging extends React.Component {
     }
 
     generateRequests() {
-        return this.state.pendingStudents.map(student => {
+        const items = this.props.isStudentView ? this.state.pendingStudents : this.state.pendingStaff
+        return items && items.map(member => {
             return (
                 <Card style={{'width': '100%'}}>
                     <Grid>
-                        <Grid.Column width={4}
+                        <Grid.Column width={this.props.isStudentView ? 4 : 8}
                             style={{'margin': '2px 0 2px 0'}}
                         >
-                            <b>{student.name}</b>
+                            <b>{member.name}</b>
                         </Grid.Column>
-                        <Grid.Column>
-                            <div> | </div>
-                        </Grid.Column>
-                        <Grid.Column width={4}
-                            style={{'margin': '2px 0 2px 0'}}
-                        >
-                            <div> {student.grade} Grade </div>
-                        </Grid.Column>
+                        {
+                            this.props.isStudentView ? 
+                            <Grid.Column>
+                                <div> | </div>
+                            </Grid.Column> :
+                            null
+                        }
+                        {
+                            this.props.isStudentView ?
+                                <Grid.Column width={4}
+                                    style={{'margin': '2px 0 2px 0'}}
+                                >
+                                    <div> {member.grade} Grade </div>
+                                </Grid.Column>
+                            :
+                            null
+                        }
                         <Grid.Column width={3}>
                             <Button
                                 disabled={this.state.sendingRequest}
                                 style={{'height':'80%', 'margin': '2px 0 2px 0'}}
-                                onClick={() => this.handleApproval(student.email)}
+                                onClick={() => this.handleApproval(member.email)}
                             >
                                 Approve
                             </Button>
@@ -178,7 +196,7 @@ export default class Messaging extends React.Component {
                             <Button
                                 disabled={this.state.sendingRequest}
                                 style={{'height':'80%', 'margin': '2px 0 2px 0'}}
-                                onClick={() => this.handleReject(student.email)}
+                                onClick={() => this.handleReject(member.email)}
                             >
                                 Reject
                             </Button>
@@ -202,7 +220,7 @@ export default class Messaging extends React.Component {
                         <Grid.Row>
                             <Message
                                 style={{'margin': "20px 0 10px 0"}}
-                                content={`Invite students to system. Enter all emails to invite as a comma-separated list.`}
+                                content={`Invite ${this.props.isStudentView ? 'student' : 'staff'} to system. Enter all emails to invite as a comma-separated list.`}
                             />
                         </Grid.Row>
                         <Grid.Row>
@@ -210,7 +228,7 @@ export default class Messaging extends React.Component {
                                 <TextArea 
                                     disabled={this.state.sendingRequest}
                                     style={{'margin': '10px 0 10px 0'}}
-                                    placeholder='student1@gmail.com, student2@yahoo.com, ...'
+                                    placeholder='member1@gmail.com, member2@yahoo.com, ...'
                                     name="emailString"
                                     value={this.state.emailString}
                                     onChange={this.handleChange}
@@ -230,7 +248,10 @@ export default class Messaging extends React.Component {
                         <Grid.Row>
                             <Message
                                 style={{'margin': "20px 0 10px 0"}}
-                                content={this.state.pendingStudents && this.state.pendingStudents.length ? `There are pending requests` : `There are no pending requests.`}
+                                content={
+                                    (this.props.isStudentView ? 
+                                        (this.state.pendingStudents && this.state.pendingStudents.length) : ((this.state.pendingStaff && this.state.pendingStaff.length))) ? 
+                                            `There are pending requests` : `There are no pending requests.`}
                             />
                         </Grid.Row>
                         <Grid.Row

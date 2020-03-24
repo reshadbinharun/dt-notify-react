@@ -12,6 +12,10 @@ const gradeOptions = ['All Grades','9th', '10th', '11th', '12th'].map(val => {
 
 const MAX_CHARS_MESSAGE = 1000;
 
+/*
+props:
+- isStudentView: boolean
+*/
 export default class StaffView extends Component {
     constructor(props){
         super(props);
@@ -33,6 +37,20 @@ export default class StaffView extends Component {
                     grade: '12th'
                 }
             ],
+            staff: [
+                {
+                    name: 'Reshad Teacher',
+                    email: 'reshad@gmail.com'
+                },
+                {
+                    name: 'Stam Teacher',
+                    email: 'stam@gmail.com'
+                },
+                {
+                    name: 'Ashish Teacher',
+                    email: 'ashish@gmail.com'
+                }
+            ],
             searchTerms: '',
             searchMode: false,
             searchGrade: '',
@@ -42,7 +60,7 @@ export default class StaffView extends Component {
             recipientName: '',
             sendingRequest: false
         }
-        this.generateStudentList = this.generateStudentList.bind(this);
+        this.generateList = this.generateList.bind(this);
         this.updateSearchTerms = this.updateSearchTerms.bind(this);
         this.handleChangeGrade = this.handleChangeGrade.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -97,13 +115,13 @@ export default class StaffView extends Component {
                 if (!result || result.error) {
                     swal({
                         title: "Error!",
-                        text: "There was an error messaging the student, please try again.",
+                        text: `There was an error messaging the ${this.props.isStudentView ? 'student' : 'staff'}, please try again.`,
                         icon: "error",
                     });
                 } else {
                     swal({
                         title: "Success!",
-                        text: "You have successfully messaged the studen.",
+                        text: `You have successfully messaged the ${this.props.isStudentView ? 'student' : 'staff'}.`,
                         icon: "success",
                     });
                 }
@@ -130,24 +148,28 @@ export default class StaffView extends Component {
         })
     }
 
-    generateStudentList(StudentObjects) {
-        return StudentObjects && StudentObjects.map(student => {
+    generateList(MemberObjects) {
+        return MemberObjects && MemberObjects.map(member => {
             return (
                 <Card style={{'width': '80%'}}>
                     <Grid>
-                        <Grid.Column width={4}
+                        <Grid.Column width={this.props.isStudentView ? 4 : 8}
                             style={{'margin': '2px 0 2px 0'}}
                         >
-                            <b>{student.name}</b>
+                            <b>{member.name}</b>
                         </Grid.Column>
                         <Grid.Column>
                             <div> | </div>
                         </Grid.Column>
-                        <Grid.Column width={4}
-                            style={{'margin': '2px 0 2px 0'}}
-                        >
-                            <div> {student.grade} Grade </div>
-                        </Grid.Column>
+                        {this.props.isStudentView ?
+                            <Grid.Column width={4}
+                                style={{'margin': '2px 0 2px 0'}}
+                            >
+                                <div> {member.grade} Grade </div>
+                            </Grid.Column> :
+                            null
+                        }
+                       
                         <Grid.Column width={3}>
                             <Modal
                                 open={this.state.modalOpen}
@@ -179,7 +201,7 @@ export default class StaffView extends Component {
                             <Button
                                 disabled={this.state.sendingRequest}
                                 style={{'height':'80%', 'margin': '2px 0 2px 0'}}
-                                onClick={(e) => this.openMessageModal(e, student.email, student.name)}
+                                onClick={(e) => this.openMessageModal(e, member.email, member.name)}
                             >
                                 Message
                             </Button>
@@ -212,8 +234,8 @@ export default class StaffView extends Component {
         })
     }
 
-    getBagofWords(student) {
-        return [student.name, student.email];
+    getBagofWords(member) {
+        return [member.name, member.email];
     }
 
     clearSearch(e) {
@@ -225,17 +247,17 @@ export default class StaffView extends Component {
         })
     }
 
-    filterResults(StudentObjects) {
+    filterResults(MemberObjects) {
         // eslint-disable-next-line
-        let gradeFilteredStudents = StudentObjects;
+        let gradeFilteredMembers = MemberObjects;
         if (this.state.searchGrade && this.state.searchGrade !== 'All Grades') {
-            gradeFilteredStudents = StudentObjects.filter(student => {
-                return student.grade === this.state.searchGrade
+            gradeFilteredMembers = MemberObjects.filter(member => {
+                return member.grade === this.state.searchGrade
             });
         }
         if (this.state.searchTerms) {
-            return gradeFilteredStudents.filter(student => {
-                let bagOfWords = this.getBagofWords(student);
+            return gradeFilteredMembers.filter(member => {
+                let bagOfWords = this.getBagofWords(member);
                 let searchTerms = this.state.searchTerms;
                 for (let i = 0; i < bagOfWords.length; i++) {
                     if (bagOfWords[i].toLowerCase().includes(searchTerms.toLowerCase())) {
@@ -244,7 +266,7 @@ export default class StaffView extends Component {
                 }
             })
         }
-        return gradeFilteredStudents;
+        return gradeFilteredMembers;
     }
 
     render() {
@@ -257,9 +279,12 @@ export default class StaffView extends Component {
             <Card centered={true} style={cardStyle}>
                 <Grid centered={true} rows={3}>
                     <Grid.Row centered style={{'margin': "20px 0 10px 0"}}>
-                        <Grid.Column width={5}> 
-                            <Select placeholder='Select Grade...' options={gradeOptions} onChange={this.handleChangeGrade}/> 
-                        </Grid.Column>
+                        {this.props.isStudentView ? 
+                            <Grid.Column width={5}> 
+                                <Select placeholder='Select Grade...' options={gradeOptions} onChange={this.handleChangeGrade}/> 
+                            </Grid.Column> :
+                            null
+                        }
                         <Grid.Column width={5}> 
                             <SearchBar
                                 onSearchMode={this.updateSearchTerms}
@@ -270,7 +295,7 @@ export default class StaffView extends Component {
                     <Grid.Row>
                         <Message
                             style={{'margin': "20px 0 10px 0"}}
-                            content={`The following are all the verified and approved students in the system.`}
+                            content={`The following are all the verified and approved ${this.props.isStudentView ? 'students' : 'staff'} in the system.`}
                         />
                     </Grid.Row>
                     <Grid.Row
@@ -278,8 +303,13 @@ export default class StaffView extends Component {
                     >
                         {
                             this.state.searchMode ?
-                            this.generateStudentList(this.filterResults(this.state.students)) :
-                            this.generateStudentList(this.state.students)
+                            this.generateList(this.filterResults(
+                                this.props.isStudentView ? this.state.students : this.state.staff
+                                )
+                            ) :
+                            this.generateList(
+                                this.props.isStudentView ? this.state.students : this.state.staff
+                                )
                         }
                     </Grid.Row>
                 </Grid>
