@@ -18,6 +18,7 @@ export default class Header extends Component {
         // TODO: Use store to fetch state
         return (
         <Grid.Column 
+            style ={{margin: '30px 0 0 0'}}
             width = {6}
         >
             <Button 
@@ -44,7 +45,7 @@ export default class Header extends Component {
         return (
             <Grid 
                 style={{
-                    'margin-bottom': '20px'
+                    'margin': '5px 0 20px 0'
                 }}
                 columns={3}
             >

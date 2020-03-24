@@ -294,7 +294,7 @@ export default class StaffView extends Component {
                     </Grid.Row>
                     <Grid.Row>
                         <Message
-                            style={{'margin': "20px 0 10px 0"}}
+                            style={{'margin': "20px 0 10px 0", width: '80%'}}
                             content={`The following are all the verified and approved ${this.props.isStudentView ? 'students' : 'staff'} in the system.`}
                         />
                     </Grid.Row>
