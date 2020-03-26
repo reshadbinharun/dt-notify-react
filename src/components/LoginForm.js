@@ -3,6 +3,7 @@ import 'semantic-ui-css/semantic.min.css';
 import { Form, Button, Icon, Message, Grid, Modal } from 'semantic-ui-react';
 import { SCHOOL_NAME } from "../App";
 import { makeCall } from "../apis";
+import swal from "sweetalert";
 
 let fieldStyle = {
     width: '100%',
@@ -44,6 +45,7 @@ export default class LoginForm extends React.Component {
         this.componentCleanup = this.componentCleanup.bind(this);
         this.openPasswordModal = this.openPasswordModal.bind(this);
         this.closePasswordModal = this.closePasswordModal.bind(this);
+        this.sendPasswordRequest = this.sendPasswordRequest.bind(this);
     }
 
     componentCleanup() {
@@ -141,6 +143,36 @@ export default class LoginForm extends React.Component {
         this.setState(change)
     }
 
+    sendPasswordRequest(e) {
+        e.preventDefault();
+        const payload = {
+            email: this.state.passwordResetEmail
+        }
+        makeCall(payload, '/login', 'post').then(result => {
+            if (!result || result.error) {
+                this.setState({
+                    sendingPasswordRequest: false
+                }, () => {
+                    swal({
+                        title: "Error!",
+                        text: `There was an error inviting the completing your request, please try again.`,
+                        icon: "error",
+                    });
+                }); 
+            } else {
+                this.setState({
+                    sendingPasswordRequest: false
+                }, () => {
+                    swal({
+                        title: "Success!",
+                        text: `Check your email to receive your new password. You can change your password once you login.`,
+                        icon: "success",
+                    });
+                });
+            }
+        });
+    }
+
     renderIncorrectCredentialsMessage() {
     let messageStyle = {
         width: '80%',
@@ -210,7 +242,7 @@ export default class LoginForm extends React.Component {
                             </Button>
                         </Grid.Column>
                     </Grid.Row>
-                    <Grid.Row>
+                    <Grid.Row centered>
                         <Modal
                             open={this.state.modalOpen}
                         >
