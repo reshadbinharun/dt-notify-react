@@ -140,27 +140,32 @@ export default class Header extends Component {
                             'height':'80%', 
                             'margin': '2px 0 2px 0',
                             'background': secondary,
-                            'color': primary
+                            'color': primary,
+                            'margin': '0 10px 0 0'
                         }
                     }
                     onClick={(e) => this.openPasswordModal(e)}
                 >
                     Change Password
                 </Button>
+                <Button 
+                    style={
+                        {
+                            'height':'80%', 
+                            'margin': '2px 0 2px 0',
+                            'background': secondary,
+                            'color': primary,
+                            'margin': '0 0 0 10px'
+                        }
+                    } 
+                    class="ui button" 
+                    onClick={this.props.logout}
+                >
+                    Log Out
+                </Button>
             </> 
              :
-            <Button 
-                style={
-                    {
-                        'background': secondary,
-                        'color': primary
-                    }
-                } 
-                class="ui button" 
-                onClick={this.props.logout}
-            >
-                Log Out
-            </Button>
+            null
             }
         </Grid.Column>)
     }
