@@ -154,6 +154,7 @@ class App extends Component {
         <Header
           loggedIn={this.state.loggedIn}
           logout={this.logout}
+          email={this.state.staffDetails && this.state.staffDetails.email}
         />
         <Container>
           {this.renderLogin()}

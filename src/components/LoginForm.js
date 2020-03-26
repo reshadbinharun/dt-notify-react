@@ -148,14 +148,14 @@ export default class LoginForm extends React.Component {
         const payload = {
             email: this.state.passwordResetEmail
         }
-        makeCall(payload, '/login', 'post').then(result => {
+        makeCall(payload, '/forgotPassword', 'post').then(result => {
             if (!result || result.error) {
                 this.setState({
                     sendingPasswordRequest: false
                 }, () => {
                     swal({
                         title: "Error!",
-                        text: `There was an error inviting the completing your request, please try again.`,
+                        text: `There was an error completing your request, please try again.`,
                         icon: "error",
                     });
                 }); 
