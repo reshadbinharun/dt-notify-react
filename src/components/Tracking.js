@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, Grid, Message, Select, Button, Modal, Form } from 'semantic-ui-react';
+import { Card, Grid, Message, Select, Button, Modal, Form, Table } from 'semantic-ui-react';
 import SearchBar from "./SearchBar";
 import swal from 'sweetalert';
 import { makeCall } from '../apis';
@@ -149,28 +149,25 @@ export default class StaffView extends Component {
     }
 
     generateList(MemberObjects) {
-        return MemberObjects && MemberObjects.map(member => {
-            return (
-                <Card style={{'width': '80%'}}>
-                    <Grid>
-                        <Grid.Column width={this.props.isStudentView ? 4 : 8}
-                            style={{'margin': '2px 0 2px 0'}}
-                        >
-                            <b>{member.name}</b>
-                        </Grid.Column>
-                        <Grid.Column>
-                            <div> | </div>
-                        </Grid.Column>
-                        {this.props.isStudentView ?
-                            <Grid.Column width={4}
-                                style={{'margin': '2px 0 2px 0'}}
-                            >
-                                <div> {member.grade} Grade </div>
-                            </Grid.Column> :
-                            null
-                        }
-                       
-                        <Grid.Column width={3}>
+        const tableHeader = 
+            <Table.Header>
+                <Table.Row>
+                <Table.HeaderCell>Name</Table.HeaderCell>
+                {this.props.isStudentView ? <Table.HeaderCell>Grade</Table.HeaderCell> : null}
+                <Table.HeaderCell>Email</Table.HeaderCell>
+                <Table.HeaderCell>Message</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+
+        const tableBody =
+            <Table.Body>
+                {MemberObjects && MemberObjects.map(member => {
+                    return (
+                    <Table.Row>
+                        <Table.Cell>{member.name}</Table.Cell>
+                        {this.props.isStudentView ? <Table.Cell>{member.grade}</Table.Cell> : null}
+                        <Table.Cell>{member.email}</Table.Cell>
+                        <Table.Cell>
                             <Modal
                                 open={this.state.modalOpen}
                             >
@@ -205,11 +202,20 @@ export default class StaffView extends Component {
                             >
                                 Message
                             </Button>
-                        </Grid.Column>
-                    </Grid>
-                </Card>
-            )
-        });
+                        </Table.Cell>
+                    </Table.Row>
+                    )
+                })}
+            </Table.Body>
+        return (
+            <Table style={{width: '80%'}} celled>
+                {tableHeader}
+                {tableBody}
+                <Table.Footer style={{margin: '10px 0 10px 0'}}>
+                    {/* TODO: Add pagination for when there are many records */}
+                </Table.Footer>
+            </Table> 
+        )
     }
 
     updateSearchTerms(e, searchObject) {
@@ -294,7 +300,7 @@ export default class StaffView extends Component {
                     </Grid.Row>
                     <Grid.Row>
                         <Message
-                            style={{'margin': "20px 0 10px 0"}}
+                            style={{'margin': "20px 0 10px 0", width: '80%'}}
                             content={`The following are all the verified and approved ${this.props.isStudentView ? 'students' : 'staff'} in the system.`}
                         />
                     </Grid.Row>

@@ -108,7 +108,7 @@ export default class Messaging extends React.Component {
         return (
             <Card centered={true} style={cardStyle}>
                 <Grid centered={true} rows={5}>
-                    <Form>
+                    <Form style={{width: '80%'}}>
                         <Grid.Row>
                             <Message
                                 style={{'margin': "20px 0 10px 0"}}
