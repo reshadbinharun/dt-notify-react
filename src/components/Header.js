@@ -95,7 +95,6 @@ export default class Header extends Component {
     }
     
     renderLoginStateInfo() {
-        // TODO: Use store to fetch state
         return (
         <Grid.Column 
             style ={{margin: '30px 0 0 0'}}
