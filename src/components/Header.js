@@ -50,7 +50,7 @@ export default class Header extends Component {
         })
     }
 
-    sendNewPasswordRequest(e) {
+    async sendNewPasswordRequest(e) {
         e.preventDefault();
         if (this.state.password !== this.state.confirmPassword) {
             this.setState({
@@ -68,7 +68,9 @@ export default class Header extends Component {
             password: this.state.password,
             email: this.props.email
         }
-        makeCall(payload, '/changePassword', 'post').then(result => {
+        try {
+            const result = await makeCall(payload, '/changePassword', 'post');
+            console.log("result is", result);
             if (!result || result.error) {
                 this.setState({
                     sendingPasswordRequest: false
@@ -92,7 +94,10 @@ export default class Header extends Component {
                     });
                 });
             }
-        });
+        }
+        catch (e) {
+            console.log("Error: Header#sendNewPasswordRequest", e);
+        }
     }
     
     renderLoginStateInfo() {

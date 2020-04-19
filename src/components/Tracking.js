@@ -102,10 +102,11 @@ export default class StaffView extends Component {
         e.preventDefault();
         this.setState({
             sendingRequest: true
-        }, () => {
+        }, async () => {
             const email = this.state.recipientEmail;
             const message = this.state.message;
-            makeCall({email, message}, '/staff/sendMessage', 'post').then(result => {
+            try {
+                const result = await makeCall({email, message}, '/staff/sendMessage', 'post');
                 this.setState({
                     sendingRequest: false,
                     modalOpen: false,
@@ -125,7 +126,9 @@ export default class StaffView extends Component {
                         icon: "success",
                     });
                 }
-            });
+            } catch (e) {
+                console.log("Error: Tracking#sendMessage", e);
+            }
         })
     }
 
