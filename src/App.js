@@ -28,6 +28,7 @@ export default class App extends Component {
     this.componentCleanup = this.componentCleanup.bind(this);
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
+    this.liftPayload = this.liftPayload.bind(this);
     this.renderScreens = this.renderScreens.bind(this);
   }
 
@@ -67,6 +68,7 @@ export default class App extends Component {
   }
 
   liftPayload(details, isStaff) {
+    console.log(details);
     if (isStaff) {
       this.setState({
         isStaff: true,
@@ -85,12 +87,14 @@ export default class App extends Component {
           <Route exact path={PATHS.login} render={(props) => 
               <LoginForm
                 liftPayload={this.liftPayload}
+                login={this.login}
               />
             }
           />
           <Route exact path={PATHS.root} render={(props) => 
               this.state.loggedIn ? <StaffView/> : <LoginForm
                 liftPayload={this.liftPayload}
+                login={this.login}
               />
             }
           />
