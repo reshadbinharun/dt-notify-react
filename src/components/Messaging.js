@@ -66,8 +66,9 @@ export default class Messaging extends React.Component {
         }
         this.setState({
             sending: true
-        }, () => {
-            makeCall(payload, '/sendMessages', 'post').then(result => {
+        }, async () => {
+            try {
+                const result = await makeCall(payload, '/sendMessages', 'post');
                 if (!result || result.error) {
                     this.setState({
                         sending: false
@@ -95,8 +96,10 @@ export default class Messaging extends React.Component {
                         });
                     });
                 }
-            });
-        })
+            } catch (e) {
+                console.log("Error: Messaging#handleSendMessage", e);
+            }
+        });
     }
 
     render() {

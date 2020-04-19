@@ -1,10 +1,10 @@
-import { BACKEND } from "./App";
+const BACKEND = process.env.REACT_APP_BACKEND || 'http://localhost:5000'
 
 export const makeCall = async (payload, api, method) => {
     var headers = new Headers();
     headers.append('Content-Type', 'application/json');
     headers.append('Accept', 'application/json');
-    fetch(`${BACKEND}${api}`, {
+    const response = await fetch(`${BACKEND}${api}`, {
         method: method,
         credentials: 'include',
         headers: headers,
