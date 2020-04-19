@@ -71,7 +71,6 @@ export default class StaffView extends Component {
 
     render() {
         const { activeItem } = this.state
-
         return (
         <div>
             <Menu pointing>

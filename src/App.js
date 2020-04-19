@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import 'semantic-ui-css/semantic.min.css';
-import { Container, Grid, Button, Divider } from 'semantic-ui-react';
-import { Route, BrowserRouter as Router, Link, Switch } from 'react-router-dom'
+import { Container, Segment } from 'semantic-ui-react';
+import { Route, BrowserRouter as Router, Switch } from 'react-router-dom'
 import Header from './components/Header';
 import LoginForm from './components/LoginForm';
 import StaffView from './components/StaffView';
-import Signup from './components/Signup';
+import Register from './screens/Register';
 
 export const BACKEND = process.env.REACT_APP_BACKEND || 'INSERT BACKEND URL HERE';
 export const SCHOOL_NAME = process.env.REACT_APP_SCHOOL || 'Dhanmondi Tutorial';
@@ -13,9 +13,9 @@ export const SCHOOL_NAME = process.env.REACT_APP_SCHOOL || 'Dhanmondi Tutorial';
 const compName = 'App_LS';
 
 export const PATHS = {
-  root: "/",
-  studentSignUp: "/student/signUp",
-  staffSignUp: "/staff/signUp"
+  root: "/", // nested -> /staff/tracking, /staff/manage, /student/tracking, /student/manage
+  login: "/login",
+  register: "/register", // nested -> /student, /staff
 }
 
 export default class App extends Component {
@@ -25,12 +25,11 @@ export default class App extends Component {
       loggedIn: true,
       isStaff: true,
       staffDetails: {},
-      // TODO: add state to hold student details if needed
     };
     this.componentCleanup = this.componentCleanup.bind(this);
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
-    this.renderLogin = this.renderLogin.bind(this);
+    this.renderScreens = this.renderScreens.bind(this);
   }
 
   componentCleanup() {
@@ -55,14 +54,14 @@ export default class App extends Component {
   }
 
   login() {
-    //TODO: should redirect to index path
-    //TODO: clear cookie
+    // TODO: Make API call to login
     this.setState({
       loggedIn: true
     });
   }
 
   logout() {
+    // TODO: make API call to clear cookie
     this.setState({
       loggedIn: false
     });
@@ -75,78 +74,49 @@ export default class App extends Component {
         staffDetails: details
       });
     }
-    // TODO: Add student details to state/store if needed
   }
 
-  renderLogin() {
-    let loggedInView =
-      this.state.isStaff ? 
-        <StaffView
-          payload = {this.state.staffDetails}
-        /> : null
-        // TODO: add StudentView if needed
-    let navigation =
-    <Grid centered>
-      <Router>
-        <div>
-          <Switch>
-            <Route exact path={PATHS.root} render={(props) => 
-              <div>
-                <div>
-                  <Grid centered rows={1}>
-                    <Grid.Row left>
-                      <Button
-                      >
-                        <Link to={PATHS.studentSignUp}>
-                          Sign up as Student
-                        </Link>
-                      </Button>
-                      <Button
-                      >
-                        <Link to={PATHS.staffSignUp}>
-                          Sign up as Staff
-                        </Link>
-                      </Button>
-                    </Grid.Row>
-                  </Grid>
-                </div>
-                <Divider/>
-                <LoginForm
-                  login = {this.login}
-                  liftPayload = {this.liftPayload}
-                />
-              </div>
-            }/>
-            <Route exact path={PATHS.studentSignUp} render={() => 
-                <Signup
-                  isStaff={false}
-                />
-              }
-            />
-            <Route exact path={PATHS.staffSignUp} render={() => 
-                <Signup
-                  isStaff={true}
-                />
-              }
-            />
-          </Switch>
-        </div>
-      </Router>
-    </Grid>
-    return this.state.loggedIn ? loggedInView : navigation;
+  renderScreens() {
+    return (
+        <Switch>
+          <Route exact path={PATHS.register} render={(props) => 
+              <Register match={props.match}/>
+            }
+          />
+          <Route exact path={PATHS.login} render={(props) => 
+              <LoginForm
+                liftPayload={this.liftPayload}
+              />
+            }
+          />
+          <Route exact path={PATHS.root} render={(props) => 
+              this.state.loggedIn ? <StaffView/> : <LoginForm
+                liftPayload={this.liftPayload}
+              />
+            }
+          />
+          <Route>
+              <Segment>
+                  This page does not exist!
+              </Segment>
+          </Route>
+        </Switch>
+    )
   }
 
   render() {
     return (
       <div>
-        <Header
-          loggedIn={this.state.loggedIn}
-          logout={this.logout}
-          email={this.state.staffDetails && this.state.staffDetails.email}
-        />
-        <Container>
-          {this.renderLogin()}
-        </Container>
+        <Router>
+          <Header
+            loggedIn={this.state.loggedIn}
+            logout={this.logout}
+            email={this.state.staffDetails && this.state.staffDetails.email}
+          />
+          <Container>
+            {this.renderScreens()}
+          </Container>
+        </Router>
       </div>
     )
   }
