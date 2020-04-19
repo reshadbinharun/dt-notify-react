@@ -7,7 +7,6 @@ import LoginForm from './components/LoginForm';
 import StaffView from './components/StaffView';
 import Register from './screens/Register';
 
-export const BACKEND = process.env.REACT_APP_BACKEND || 'INSERT BACKEND URL HERE';
 export const SCHOOL_NAME = process.env.REACT_APP_SCHOOL || 'Dhanmondi Tutorial';
 
 const compName = 'App_LS';

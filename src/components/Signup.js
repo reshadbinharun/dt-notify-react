@@ -86,7 +86,7 @@ export default class Signup extends React.Component {
         }
         return baseCondition && this.state.grade;
     }
-    handleSubmit(e) {
+    async handleSubmit(e) {
         e.preventDefault();
         const readyForSubmit = this.validateSubmitReadiness()
         this.setState({
@@ -105,24 +105,27 @@ export default class Signup extends React.Component {
             }
             e.preventDefault();
             const endPoint = this.props.isStaff ? '/staff/add' : '/student/add';
-            makeCall(payload, endPoint, 'post').then(result => {
+            try {
+                const result = makeCall(payload, endPoint, 'post')
                 if (!result || result.error) {
                     swal({
                         title: "Error!",
                         text: "There was an error completing your request, please try again.",
                         icon: "error",
-                      });
+                        });
                 } else {
                     swal({
                         title: "Congratulations!",
                         text: "Your submission was successful! Please check your email to confirm your account.",
                         icon: "success",
-                      });
+                        });
                     this.setState({
                         signUpDone: true
                     })
                 }
-            });
+            } catch (e) {
+                console.log("Error: Signup#handleSubmit", e);
+            }
         } else {
             swal({
                 title: "Yikes!",

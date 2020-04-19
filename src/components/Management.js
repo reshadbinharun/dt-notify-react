@@ -54,7 +54,7 @@ export default class Messaging extends React.Component {
         this.setState(change)
     }
 
-    handleInvite(e) {
+    async handleInvite(e) {
         e.preventDefault();
         const emailsArr = this.state.emailString.replace(/\s/g, '').split(',');
         this.setState({sendingRequest: true});
@@ -62,7 +62,8 @@ export default class Messaging extends React.Component {
             emails: emailsArr
         };
         const endPoint = this.props.isStudentView ? '/invite/students' : '/invite/staff'
-        makeCall(payload, endPoint, 'post').then(result => {
+        try {
+            const result = await makeCall(payload, endPoint, 'post')
             if (!result || result.error) {
                 this.setState({
                     sendingRequest: false
@@ -85,17 +86,20 @@ export default class Messaging extends React.Component {
                     });
                 });
             }
-        });
+        } catch (e) {
+            console.log("Error: Management#handleInvite", e)
+        }
     }
 
-    handleApproval(email) {
+    async handleApproval(email) {
         this.setState({sendingRequest: true});
         const payload = {
             approved: true,
             email: email
         };
         const endPoint = this.props.isStudentView ? '/approve/student' : '/approve/staff'
-        makeCall(payload, endPoint, 'post').then(result => {
+        try {
+            const result = await makeCall(payload, endPoint, 'post');
             if (!result || result.error) {
                 this.setState({
                     sendingRequest: false
@@ -117,16 +121,19 @@ export default class Messaging extends React.Component {
                     });
                 });
             }
-        });
+        } catch (e) {
+            console.log("Error: Management#handleApproval", e);
+        }
     }
 
-    handleReject(email) {
+    async handleReject(email) {
         this.setState({sendingRequest: true});
         const payload = {
             email: email
         };
         const endPoint = this.props.isStudentView ? '/students/delete' : '/staff/delete'
-        makeCall(payload, endPoint, 'post').then(result => {
+        try {
+            const result = await makeCall(payload, endPoint, 'post');
             if (!result || result.error) {
                 this.setState({
                     sendingRequest: false
@@ -152,7 +159,9 @@ export default class Messaging extends React.Component {
                     });
                 });
             }
-        });
+        } catch(e) {
+            console.log("Error: Management#handleReject", e);
+        }
     }
 
     generateRequests() {

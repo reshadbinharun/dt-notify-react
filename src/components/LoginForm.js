@@ -52,14 +52,15 @@ export default class LoginForm extends React.Component {
         sessionStorage.setItem(compName, JSON.stringify(this.state));
     }
 
-    handleSubmitAsStudent(e) {
+    async handleSubmitAsStudent(e) {
         e.preventDefault()
         this.setState({studentLoginLoading: true});
         const payload = {
             email: this.state.email,
             password: this.state.password
         };
-        makeCall(payload, '/login', 'post').then(result => {
+        try {
+            const result = await makeCall(payload, '/login', 'post')
             if (!result || result.error) {
                 this.setState({
                     incorrectCredentials: true,
@@ -75,17 +76,21 @@ export default class LoginForm extends React.Component {
                     this.props.liftPayload(result, true);
                 });
             }
-        });
+        }
+        catch (e) {
+            console.log("Error: LoginForm#handleSubmitAsStudent", e)
+        }
     }
 
-    handleSubmitAsStaff(e) {
+    async handleSubmitAsStaff(e) {
         e.preventDefault()
         this.setState({staffLoginLoading: true});
         const payload = {
             email: this.state.email,
             password: this.state.password
         };
-        makeCall(payload, '/login', 'post').then(result => {
+        try {
+            const result = await makeCall(payload, '/login', 'post')
             if (!result || result.error) {
                 this.setState({
                     incorrectCredentials: true,
@@ -101,7 +106,9 @@ export default class LoginForm extends React.Component {
                     this.props.liftPayload(result, true);
                 });
             }
-        });
+        } catch (e) {
+            console.log("Error: LoginForm#handleSubmitAsStaff", e)
+        }
     }
 
     openPasswordModal(e) {
@@ -143,12 +150,13 @@ export default class LoginForm extends React.Component {
         this.setState(change)
     }
 
-    sendPasswordRequest(e) {
+    async sendPasswordRequest(e) {
         e.preventDefault();
         const payload = {
             email: this.state.passwordResetEmail
         }
-        makeCall(payload, '/forgotPassword', 'post').then(result => {
+        try {
+            const result = await makeCall(payload, '/forgotPassword', 'post');
             if (!result || result.error) {
                 this.setState({
                     sendingPasswordRequest: false
@@ -170,7 +178,9 @@ export default class LoginForm extends React.Component {
                     });
                 });
             }
-        });
+        } catch (e) {
+            console.log("Error: LoginForm#sendPasswordRequest", e);
+        }
     }
 
     renderIncorrectCredentialsMessage() {
