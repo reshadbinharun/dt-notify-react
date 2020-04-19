@@ -2,22 +2,10 @@ import React, { Component } from 'react';
 import 'semantic-ui-css/semantic.min.css';
 import { Container, Grid, Button, Divider } from 'semantic-ui-react';
 import { Route, BrowserRouter as Router, Link, Switch } from 'react-router-dom'
-import { connect } from 'react-redux';
 import Header from './components/Header';
 import LoginForm from './components/LoginForm';
 import StaffView from './components/StaffView';
 import Signup from './components/Signup';
-
-
-import { simpleAction } from './actions/simpleAction'
-
-const mapStateToProps = state => ({
-  ...state
-})
-
-const mapDispatchToProps = dispatch => ({
-  simpleAction: () => dispatch(simpleAction())
-})
 
 export const BACKEND = process.env.REACT_APP_BACKEND || 'INSERT BACKEND URL HERE';
 export const SCHOOL_NAME = process.env.REACT_APP_SCHOOL || 'Dhanmondi Tutorial';
@@ -30,7 +18,7 @@ export const PATHS = {
   staffSignUp: "/staff/signUp"
 }
 
-class App extends Component {
+export default class App extends Component {
   constructor() {
     super();
     this.state = {
@@ -163,5 +151,3 @@ class App extends Component {
     )
   }
 }
-
-export default connect(mapStateToProps, mapDispatchToProps)(App)
