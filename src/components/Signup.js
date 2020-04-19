@@ -1,8 +1,7 @@
 import React from 'react';
 import 'semantic-ui-css/semantic.min.css';
 import { Form, Button, Icon, Message, Grid, Dropdown } from 'semantic-ui-react';
-import { PATHS } from "../App"
-import { Redirect, Link } from "react-router-dom"
+import { Redirect } from "react-router-dom"
 import swal from "sweetalert";
 import { makeCall } from "../apis";
 
@@ -42,6 +41,7 @@ export default class Signup extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.componentCleanup = this.componentCleanup.bind(this);
         this.validateSubmitReadiness = this.validateSubmitReadiness.bind(this);
+        this.goBack = this.goBack.bind(this);
     }
 
     componentCleanup() {
@@ -132,87 +132,90 @@ export default class Signup extends React.Component {
         }
         
     }
+
+    goBack(e) {
+        e.preventDefault();
+        this.props.match.history.goBack();
+    }
     render() {
-    return (
-        <div>
-            {this.state.signUpDone? <Redirect to="/" /> :
+        return (
             <div>
-                <Message
-                    style= {messageStyle}
-                    attached
-                    centered
-                    header={`${this.props.isStaff? "Staff" : "Student"} Sign up`}
-                    content="Welcome! We're excited to have you on board."
-                />
-                <Grid>
-                <Grid.Row centered>
-                    <Button>
-                        <Link to={PATHS.root}>
-                            Back
-                        </Link>
-                    </Button>
-                </Grid.Row>
-                <Grid.Row centered>
-                <Form onSubmit={this.handleSubmit}>
-                    <Form.Field
-                    type="email"
-                    required="true"
-                    style={fieldStyle}
-                    >
-                        <label>Email</label>
-                        <input placeholder='Email' name="email" onChange={this.handleChange} />
-                    </Form.Field>
-                    <Form.Field
-                        type="password"
-                        required="true"
-                        style={fieldStyle}
-                    >
-                        <label>Password</label>
-                        <input placeholder='***' name="password" type="password" onChange={this.handleChange} />
-                    </Form.Field>
-                    <Form.Field
-                        type="password"
-                        required="true"
-                        style={fieldStyle}
-                    >
-                        <label>Confirm Password</label>
-                        <input placeholder='***' name="confirmPassword" type="password" onChange={this.handleChange} />
-                    </Form.Field>
-                    {this.state.password !== this.state.confirmPassword ? 
+                {this.state.signUpDone? <Redirect to="/" /> :
+                <div>
                     <Message
+                        style= {messageStyle}
                         attached
                         centered
-                        error
-                        content="Your passwords do not match!"
-                    /> 
-                    : null}
-                    <Form.Field
-                        type="text"
+                        header={`${this.props.isStaff? "Staff" : "Student"} Sign up`}
+                        content="Welcome! We're excited to have you on board."
+                    />
+                    <Grid>
+                    <Grid.Row centered>
+                        <Button onClick={this.goBack}>
+                            Back
+                        </Button>
+                    </Grid.Row>
+                    <Grid.Row centered>
+                    <Form onSubmit={this.handleSubmit}>
+                        <Form.Field
+                        type="email"
                         required="true"
                         style={fieldStyle}
-                    >
-                        <label>Name</label>
-                        <input placeholder='Name' name="name" onChange={this.handleChange} />
-                    </Form.Field>
-                    {this.props.isStaff ? null :
-                    <Form.Field>
-                        <label>Grade</label>
-                        <Dropdown placeholder='Select the grade you attend...' fluid selection options={gradeOptions} onChange={this.handleChangeGrade} name="grade" value={this.state.grade}/>
-                    </Form.Field>
-                    }
-                    <Button 
-                        color="blue" 
-                        type='submit'
-                        loading={this.state.submitting}>
-                        <Icon name="unlock"/>
-                        Submit
-                    </Button>
-                    </Form>
-                </Grid.Row>
-                </Grid>    
+                        >
+                            <label>Email</label>
+                            <input placeholder='Email' name="email" onChange={this.handleChange} />
+                        </Form.Field>
+                        <Form.Field
+                            type="password"
+                            required="true"
+                            style={fieldStyle}
+                        >
+                            <label>Password</label>
+                            <input placeholder='***' name="password" type="password" onChange={this.handleChange} />
+                        </Form.Field>
+                        <Form.Field
+                            type="password"
+                            required="true"
+                            style={fieldStyle}
+                        >
+                            <label>Confirm Password</label>
+                            <input placeholder='***' name="confirmPassword" type="password" onChange={this.handleChange} />
+                        </Form.Field>
+                        {this.state.password !== this.state.confirmPassword ? 
+                        <Message
+                            attached
+                            centered
+                            error
+                            content="Your passwords do not match!"
+                        /> 
+                        : null}
+                        <Form.Field
+                            type="text"
+                            required="true"
+                            style={fieldStyle}
+                        >
+                            <label>Name</label>
+                            <input placeholder='Name' name="name" onChange={this.handleChange} />
+                        </Form.Field>
+                        {this.props.isStaff ? null :
+                        <Form.Field>
+                            <label>Grade</label>
+                            <Dropdown placeholder='Select the grade you attend...' fluid selection options={gradeOptions} onChange={this.handleChangeGrade} name="grade" value={this.state.grade}/>
+                        </Form.Field>
+                        }
+                        <Button 
+                            color="blue" 
+                            type='submit'
+                            loading={this.state.submitting}>
+                            <Icon name="unlock"/>
+                            Submit
+                        </Button>
+                        </Form>
+                    </Grid.Row>
+                    </Grid>    
+                </div>
+                }
             </div>
-            }
-        </div>
         )
     }
 }

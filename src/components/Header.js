@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {Grid, Button, Modal, Form} from 'semantic-ui-react';
+import { Link } from "react-router-dom"
 import 'semantic-ui-css/semantic.min.css';
 import {primary, secondary} from "../colors";
 import swal from "sweetalert";
@@ -95,44 +96,73 @@ export default class Header extends Component {
     }
     
     renderLoginStateInfo() {
-        // TODO: Use store to fetch state
-        return (
-        <Grid.Column 
-            style ={{margin: '30px 0 0 0'}}
-            width = {6}
-        >
-            {this.props.loggedIn ?
-            <>
-                <Modal
-                    open={this.state.modalOpen}
-                >
-                    <Modal.Header>Please enter your new password</Modal.Header>
-                    <Modal.Content>
-                        <Form onSubmit={this.sendNewPasswordRequest}>
-                            <Form.Field>
-                                <label>New password</label>
-                                <input type="password" placeholder='***' name="password" onChange={this.handleChange} value={this.state.password} />
-                            </Form.Field>
-                            <Form.Field>
-                                <label>Confirm your new password</label>
-                                <input type="password" placeholder='***' name="confirmPassword" onChange={this.handleChange} value={this.state.confirmPassword} />
-                            </Form.Field>
-                            <Button 
-                                color="blue" 
-                                type='submit'
-                                loading={this.state.sendingPasswordRequest}
-                                disabled={!this.state.password || !this.state.confirmPassword || this.state.sendingPasswordRequest}
-                            >
-                                Send
-                            </Button>
-                        </Form>
-                    </Modal.Content>
-                    <Modal.Actions>
-                        <Button onClick={this.closePasswordModal}>
-                            Done
+        let loggedInGroup =
+        <>
+            <Modal
+                open={this.state.modalOpen}
+            >
+                <Modal.Header>Please enter your new password</Modal.Header>
+                <Modal.Content>
+                    <Form onSubmit={this.sendNewPasswordRequest}>
+                        <Form.Field>
+                            <label>New password</label>
+                            <input type="password" placeholder='***' name="password" onChange={this.handleChange} value={this.state.password} />
+                        </Form.Field>
+                        <Form.Field>
+                            <label>Confirm your new password</label>
+                            <input type="password" placeholder='***' name="confirmPassword" onChange={this.handleChange} value={this.state.confirmPassword} />
+                        </Form.Field>
+                        <Button 
+                            color="blue" 
+                            type='submit'
+                            loading={this.state.sendingPasswordRequest}
+                            disabled={!this.state.password || !this.state.confirmPassword || this.state.sendingPasswordRequest}
+                        >
+                            Send
                         </Button>
-                    </Modal.Actions>
-                </Modal>
+                    </Form>
+                </Modal.Content>
+                <Modal.Actions>
+                    <Button onClick={this.closePasswordModal}>
+                        Done
+                    </Button>
+                </Modal.Actions>
+            </Modal>
+            <Button
+                disabled={this.state.sendingRequest}
+                style={
+                    {
+                        'height':'80%', 
+                        'margin': '2px 0 2px 0',
+                        'background': secondary,
+                        'color': primary,
+                        'margin': '0 10px 0 0'
+                    }
+                }
+                onClick={(e) => this.openPasswordModal(e)}
+            >
+                Change Password
+            </Button>
+            <Button 
+                style={
+                    {
+                        'height':'80%', 
+                        'margin': '2px 0 2px 0',
+                        'background': secondary,
+                        'color': primary,
+                        'margin': '0 0 0 10px'
+                    }
+                } 
+                class="ui button" 
+                onClick={this.props.logout}
+            >
+                Log Out
+            </Button>
+        </>
+
+        let loggedOutGroup =
+        <>
+            <Link to="/register">
                 <Button
                     disabled={this.state.sendingRequest}
                     style={
@@ -144,10 +174,11 @@ export default class Header extends Component {
                             'margin': '0 10px 0 0'
                         }
                     }
-                    onClick={(e) => this.openPasswordModal(e)}
                 >
-                    Change Password
+                    Register
                 </Button>
+            </Link>
+            <Link to="/login">
                 <Button 
                     style={
                         {
@@ -159,13 +190,18 @@ export default class Header extends Component {
                         }
                     } 
                     class="ui button" 
-                    onClick={this.props.logout}
                 >
-                    Log Out
+                    Log In
                 </Button>
-            </> 
-             :
-            null
+            </Link>
+        </>
+        return (
+        <Grid.Column 
+            style ={{margin: '30px 0 0 0'}}
+            width = {6}
+        >
+            {this.props.loggedIn ?
+                loggedInGroup : loggedOutGroup
             }
         </Grid.Column>)
     }
@@ -189,7 +225,7 @@ export default class Header extends Component {
                 <Grid.Column width = {5}>
                     {this.renderLogo()}
                 </Grid.Column>
-                {this.props.loggedIn ? this.renderLoginStateInfo() : null}
+                {this.renderLoginStateInfo()}
             </Grid>
         )
     }
