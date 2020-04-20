@@ -10,8 +10,6 @@ import { makeCall } from "./apis";
 
 export const SCHOOL_NAME = process.env.REACT_APP_SCHOOL || 'Dhanmondi Tutorial';
 
-const compName = 'App_LS';
-
 export const PATHS = {
   root: "/",
   login: "/login",
@@ -26,35 +24,20 @@ export default class App extends Component {
       isStaff: true,
       staffDetails: {},
     };
-    this.componentCleanup = this.componentCleanup.bind(this);
     this.logout = this.logout.bind(this);
+    this.login = this.login.bind(this);
     this.liftPayload = this.liftPayload.bind(this);
     this.renderScreens = this.renderScreens.bind(this);
   }
 
-  componentCleanup() {
-    sessionStorage.setItem(compName, JSON.stringify(this.state));
-  }
-
-  componentDidMount() {
-    window.addEventListener('beforeunload', this.componentCleanup);
-    const persistState = sessionStorage.getItem(compName);
-    if (persistState) {
-      try {
-        this.setState(JSON.parse(persistState));
-      } catch (e) {
-        console.log("Could not get fetch state from local storage for", compName);
-      }
-    }
-  }
-
-  componentWillUnmount() {
-    this.componentCleanup();
-    window.removeEventListener('beforeunload', this.componentCleanup);
+  login() {
+    this.setState({
+      loggedIn: true
+    });
   }
 
   async logout() {
-    const response = await makeCall({}, '/logout', 'get');
+    await makeCall({}, '/logout', 'get');
     this.setState({
       loggedIn: false
     });
@@ -79,12 +62,14 @@ export default class App extends Component {
           <Route exact path={PATHS.login} render={(props) => 
               <LoginForm
                 liftPayload={this.liftPayload}
+                login={this.login}
               />
             }
           />
           <Route exact path={PATHS.root} render={(props) => 
               this.state.loggedIn ? <StaffView/> : <LoginForm
                 liftPayload={this.liftPayload}
+                login={this.login}
               />
             }
           />

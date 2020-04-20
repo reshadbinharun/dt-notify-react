@@ -20,6 +20,7 @@ let buttonStyle = {
 /*
 props:
 -liftPayload: ()
+-login: ()
 */
 export default class LoginForm extends React.Component {
     constructor() {
@@ -60,6 +61,7 @@ export default class LoginForm extends React.Component {
                     loginLoading: false,
                 },() => {
                     this.props.liftPayload(result, true);
+                    this.props.login();
                 });
             }
         }
