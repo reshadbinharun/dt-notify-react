@@ -12,9 +12,9 @@ export const SCHOOL_NAME = process.env.REACT_APP_SCHOOL || 'Dhanmondi Tutorial';
 const compName = 'App_LS';
 
 export const PATHS = {
-  root: "/", // nested -> /staff/tracking, /staff/manage, /student/tracking, /student/manage
+  root: "/",
   login: "/login",
-  register: "/register", // nested -> /student, /staff
+  register: "/register",
 }
 
 export default class App extends Component {
@@ -26,7 +26,6 @@ export default class App extends Component {
       staffDetails: {},
     };
     this.componentCleanup = this.componentCleanup.bind(this);
-    this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
     this.liftPayload = this.liftPayload.bind(this);
     this.renderScreens = this.renderScreens.bind(this);
@@ -53,22 +52,14 @@ export default class App extends Component {
     window.removeEventListener('beforeunload', this.componentCleanup);
   }
 
-  login() {
-    // TODO: Make API call to login
-    this.setState({
-      loggedIn: true
-    });
-  }
-
-  logout() {
-    // TODO: make API call to clear cookie
+  async logout() {
+    const response = await makeCall(payload, '/logout', 'get');
     this.setState({
       loggedIn: false
     });
   }
 
   liftPayload(details, isStaff) {
-    console.log(details);
     if (isStaff) {
       this.setState({
         isStaff: true,
@@ -87,14 +78,12 @@ export default class App extends Component {
           <Route exact path={PATHS.login} render={(props) => 
               <LoginForm
                 liftPayload={this.liftPayload}
-                login={this.login}
               />
             }
           />
           <Route exact path={PATHS.root} render={(props) => 
               this.state.loggedIn ? <StaffView/> : <LoginForm
                 liftPayload={this.liftPayload}
-                login={this.login}
               />
             }
           />

@@ -19,7 +19,6 @@ let buttonStyle = {
 
 /*
 props:
--login: ()
 -liftPayload: ()
 */
 export default class LoginForm extends React.Component {
@@ -31,7 +30,6 @@ export default class LoginForm extends React.Component {
             password: '',
             error: null,
             loginLoading: false,
-            staffLoginLoading: false,
             modalOpen: false,
             sendingPasswordRequest: false
         }
@@ -52,7 +50,6 @@ export default class LoginForm extends React.Component {
         };
         try {
             const result = await makeCall(payload, '/login', 'post')
-            console.log("result is ", result)
             if (!result || result.error) {
                 this.setState({
                     error: result.error ? result.error : `Your login was unsuccessful.`,
@@ -62,7 +59,6 @@ export default class LoginForm extends React.Component {
                 this.setState({
                     loginLoading: false,
                 },() => {
-                    this.props.login()
                     this.props.liftPayload(result, true);
                 });
             }
