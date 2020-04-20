@@ -14,15 +14,13 @@ let messageStyle = {
 }
 
 let buttonStyle = {
-    width: '80%',
+    width: '100px',
 }
-
-const compName = 'LoginForm_LS';
 
 /*
 props:
--login: ()
 -liftPayload: ()
+-login: ()
 */
 export default class LoginForm extends React.Component {
     constructor() {
@@ -31,30 +29,22 @@ export default class LoginForm extends React.Component {
             email: '',
             passwordResetEmail: '',
             password: '',
-            incorrectCredentials: false,
             error: null,
-            studentLoginLoading: false,
-            staffLoginLoading: false,
+            loginLoading: false,
             modalOpen: false,
             sendingPasswordRequest: false
         }
         this.handleChange = this.handleChange.bind(this);
-        this.handleSubmitAsStaff = this.handleSubmitAsStaff.bind(this);
-        this.handleSubmitAsStudent = this.handleSubmitAsStudent.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
         this.renderIncorrectCredentialsMessage = this.renderIncorrectCredentialsMessage.bind(this);
-        this.componentCleanup = this.componentCleanup.bind(this);
         this.openPasswordModal = this.openPasswordModal.bind(this);
         this.closePasswordModal = this.closePasswordModal.bind(this);
         this.sendPasswordRequest = this.sendPasswordRequest.bind(this);
     }
 
-    componentCleanup() {
-        sessionStorage.setItem(compName, JSON.stringify(this.state));
-    }
-
-    async handleSubmitAsStudent(e) {
+    async handleSubmit(e) {
         e.preventDefault()
-        this.setState({studentLoginLoading: true});
+        this.setState({loginLoading: true});
         const payload = {
             email: this.state.email,
             password: this.state.password
@@ -63,51 +53,24 @@ export default class LoginForm extends React.Component {
             const result = await makeCall(payload, '/login', 'post')
             if (!result || result.error) {
                 this.setState({
-                    incorrectCredentials: true,
                     error: result.error ? result.error : `Your login was unsuccessful.`,
-                    studentLoginLoading: false
+                    loginLoading: false
                 });
             } else {
                 this.setState({
-                    incorrectCredentials: false,
-                    studentLoginLoading: false,
+                    loginLoading: false,
                 },() => {
-                    this.props.login()
                     this.props.liftPayload(result, true);
+                    this.props.login();
                 });
             }
         }
         catch (e) {
-            console.log("Error: LoginForm#handleSubmitAsStudent", e)
-        }
-    }
-
-    async handleSubmitAsStaff(e) {
-        e.preventDefault()
-        this.setState({staffLoginLoading: true});
-        const payload = {
-            email: this.state.email,
-            password: this.state.password
-        };
-        try {
-            const result = await makeCall(payload, '/login', 'post')
-            if (!result || result.error) {
-                this.setState({
-                    incorrectCredentials: true,
-                    error: result.error ? result.error : `Your login was unsuccessful.`,
-                    staffLoginLoading: false
-                }); 
-            } else {
-                this.setState({
-                    incorrectCredentials: false,
-                    staffLoginLoading: false,
-                },() => {
-                    this.props.login()
-                    this.props.liftPayload(result, true);
-                });
-            }
-        } catch (e) {
-            console.log("Error: LoginForm#handleSubmitAsStaff", e)
+            this.setState({
+                error: `Something went wrong! Please try again!`,
+                loginLoading: false
+            });
+            console.log("Error: LoginForm#handleSubmit", e)
         }
     }
 
@@ -124,23 +87,6 @@ export default class LoginForm extends React.Component {
             modalOpen: false,
             passwordResetEmail: ''
         })
-    }
-
-    componentDidMount() {
-        window.addEventListener('beforeunload', this.componentCleanup);
-        const persistState = sessionStorage.getItem(compName);
-        if (persistState) {
-          try {
-            this.setState(JSON.parse(persistState));
-          } catch (e) {
-            console.log("Could not get fetch state from local storage for", compName);
-          }
-        }
-    }
-
-    componentWillUnmount() {
-        this.componentCleanup();
-        window.removeEventListener('beforeunload', this.componentCleanup);
     }
 
     handleChange(e) {
@@ -188,12 +134,13 @@ export default class LoginForm extends React.Component {
         width: '80%',
         margin: '10px'
     }
-    return this.state.incorrectCredentials ?
+    return this.state.error ?
     <Grid centered>
         <Message
-        error
-        content={this.state.error}
-        style = {messageStyle}
+            centered
+            error
+            content={this.state.error}
+            style = {messageStyle}
     />
     </Grid>
     : null
@@ -230,27 +177,15 @@ export default class LoginForm extends React.Component {
                         </Form.Field>
                     </Form>
                     </Grid.Row>
-                    <Grid.Row centered columns={2}>
-                        <Grid.Column>
-                            <Button
-                                style={buttonStyle}
-                                onClick={this.handleSubmitAsStudent}
-                                loading={this.state.studentLoginLoading}
-                            >
-                                <Icon name="unlock"/>
-                                Login as Student
-                            </Button>
-                        </Grid.Column>
-                        <Grid.Column>
-                            <Button 
-                                style={buttonStyle}                        
-                                onClick={this.handleSubmitAsStaff}
-                                loading={this.state.staffLoginLoading}
-                            >
-                                <Icon name="unlock"/>
-                                Login as Staff
-                            </Button>
-                        </Grid.Column>
+                    <Grid.Row centered>
+                    <Button
+                        style={buttonStyle}
+                        onClick={this.handleSubmit}
+                        loading={this.state.loginLoading}
+                    >
+                        <Icon name="unlock"/>
+                        Login
+                    </Button>
                     </Grid.Row>
                     <Grid.Row centered>
                         <Modal

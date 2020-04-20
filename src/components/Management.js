@@ -3,8 +3,6 @@ import { Grid, Message, Card, Form, Button, TextArea, Icon, Table } from 'semant
 import { makeCall } from '../apis';
 import swal from "sweetalert";
 
-const compName = 'Management_LS';
-
 /*
 props:
 - isStudentView: boolean
@@ -14,9 +12,8 @@ export default class Messaging extends React.Component {
         super();
         this.state = {
             emailString: '',
-            // TODO: remove mock data later
-            pendingStudents: [{email: 'ree@gmail.com', name: 'Ree', grade: '9th'},{email: 'ree@gmail.com', name: 'Ree 2', grade: '8th'}],
-            pendingStaff: [{email: 'teacher@gmail.com', name: 'Teach Ree'},{email: 'teacher2@gmail.com', name: 'Ree 2'}],
+            pendingStudents: [],
+            pendingStaff: [],
             sendingRequest: false
         }
         this.handleChange = this.handleChange.bind(this);
@@ -24,27 +21,27 @@ export default class Messaging extends React.Component {
         this.generateRequests = this.generateRequests.bind(this);
         this.handleApproval = this.handleApproval.bind(this);
         this.handleReject = this.handleReject.bind(this);
+        this.shouldShowTable = this.shouldShowTable.bind(this);
     }
 
-    componentCleanup() {
-        sessionStorage.setItem(compName, JSON.stringify(this.state));
-    }
-
-    componentDidMount() {
-        window.addEventListener('beforeunload', this.componentCleanup);
-        const persistState = sessionStorage.getItem(compName);
-            if (persistState) {
-            try {
-                this.setState(JSON.parse(persistState));
-            } catch (e) {
-                console.log("Could not get fetch state from local storage for", compName);
+    async componentDidMount() {
+        if (!this.props.isStudentView) {
+            let result = await makeCall({}, '/staff/students', 'GET');
+            if (result && !result.error) {
+                const pendingStudents = result.students && result.students.filter(student => !student.approved)
+                this.setState({
+                    pendingStudents
+                });
+            }
+        } else if (this.props.isStudentView) {
+            let result = await makeCall({}, '/staff/staff', 'GET');
+            if (result && !result.error) {
+                const pendingStaff = result.staff && result.staff.filter(staff => !staff.approved)
+                this.setState({
+                    pendingStaff
+                });
             }
         }
-    }
-
-    componentWillUnmount() {
-        this.componentCleanup();
-        window.removeEventListener('beforeunload', this.componentCleanup);
     }
 
     handleChange(e) {
@@ -164,6 +161,13 @@ export default class Messaging extends React.Component {
         }
     }
 
+    shouldShowTable() {
+        let showTable = this.props.isStudentView ? 
+        (this.state.pendingStudents && this.state.pendingStudents.length) :
+        ((this.state.pendingStaff && this.state.pendingStaff.length))
+        return showTable;
+    }
+
     generateRequests() {
         if (this.props.isStudentView) {
             const items = this.state.pendingStudents;
@@ -215,7 +219,7 @@ export default class Messaging extends React.Component {
                 <Table.Footer style={{margin: '10px 0 10px 0'}}>
                     {/* TODO: Add pagination for when there are many records */}
                 </Table.Footer>
-            </Table> 
+            </Table>
           )
         }
         const items = this.state.pendingStaff;
@@ -309,18 +313,20 @@ export default class Messaging extends React.Component {
                         </Grid.Row>
                         <Grid.Row>
                             <Message
-                                style={{'margin': "20px 0 10px 0"}}
+                                style={{'margin': "20px 0 20px 0"}}
                                 content={
-                                    (this.props.isStudentView ? 
-                                        (this.state.pendingStudents && this.state.pendingStudents.length) : ((this.state.pendingStaff && this.state.pendingStaff.length))) ? 
+                                    this.shouldShowTable() ? 
                                             `There are pending requests` : `There are no pending requests.`}
                             />
                         </Grid.Row>
+                        {this.shouldShowTable() ?
                         <Grid.Row
                             style={{'margin': '10px 0 10px 0'}}
                         >
                             {this.generateRequests()}
-                        </Grid.Row>
+                        </Grid.Row> :
+                            null
+                        }
                     </Form>
                 </Grid>
             </Card>

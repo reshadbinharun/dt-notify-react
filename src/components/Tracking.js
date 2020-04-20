@@ -4,8 +4,6 @@ import SearchBar from "./SearchBar";
 import swal from 'sweetalert';
 import { makeCall } from '../apis';
 
-const compName = 'Tracking_LS';
-
 const gradeOptions = ['All Grades','9th', '10th', '11th', '12th'].map(val => {
     return {key: val, text: val, value: val}
 });
@@ -20,37 +18,8 @@ export default class StaffView extends Component {
     constructor(props){
         super(props);
         this.state = {
-            students: [
-                {
-                    name: 'Reshad',
-                    email: 'reshad@gmail.com',
-                    grade: '9th'
-                },
-                {
-                    name: 'Stam',
-                    email: 'stam@gmail.com',
-                    grade: '10th'
-                },
-                {
-                    name: 'Ashish',
-                    email: 'ashish@gmail.com',
-                    grade: '12th'
-                }
-            ],
-            staff: [
-                {
-                    name: 'Reshad Teacher',
-                    email: 'reshad@gmail.com'
-                },
-                {
-                    name: 'Stam Teacher',
-                    email: 'stam@gmail.com'
-                },
-                {
-                    name: 'Ashish Teacher',
-                    email: 'ashish@gmail.com'
-                }
-            ],
+            students: [],
+            staff: [],
             searchTerms: '',
             searchMode: false,
             searchGrade: '',
@@ -70,25 +39,24 @@ export default class StaffView extends Component {
         this.filterResults = this.filterResults.bind(this);
     }
 
-    componentCleanup() {
-        sessionStorage.setItem(compName, JSON.stringify(this.state));
-    }
-
-    componentDidMount() {
-        window.addEventListener('beforeunload', this.componentCleanup);
-        const persistState = sessionStorage.getItem(compName);
-            if (persistState) {
-            try {
-                this.setState(JSON.parse(persistState));
-            } catch (e) {
-                console.log("Could not get fetch state from local storage for", compName);
+    async componentDidMount() {
+        if (!this.props.isStudentView) {
+            let result = await makeCall({}, '/staff/students', 'GET');
+            if (result && !result.error) {
+                const students = result.students
+                this.setState({
+                    students
+                });
+            }
+        } else if (this.props.isStudentView) {
+            let result = await makeCall({}, '/staff/staff', 'GET');
+            if (result && !result.error) {
+                const staff = result.staff;
+                this.setState({
+                    staff
+                });
             }
         }
-    }
-
-    componentWillUnmount() {
-        this.componentCleanup();
-        window.removeEventListener('beforeunload', this.componentCleanup);
     }
 
     handleChange(e) {

@@ -6,15 +6,14 @@ import Header from './components/Header';
 import LoginForm from './components/LoginForm';
 import StaffView from './components/StaffView';
 import Register from './screens/Register';
+import { makeCall } from "./apis";
 
 export const SCHOOL_NAME = process.env.REACT_APP_SCHOOL || 'Dhanmondi Tutorial';
 
-const compName = 'App_LS';
-
 export const PATHS = {
-  root: "/", // nested -> /staff/tracking, /staff/manage, /student/tracking, /student/manage
+  root: "/",
   login: "/login",
-  register: "/register", // nested -> /student, /staff
+  register: "/register",
 }
 
 export default class App extends Component {
@@ -25,42 +24,20 @@ export default class App extends Component {
       isStaff: true,
       staffDetails: {},
     };
-    this.componentCleanup = this.componentCleanup.bind(this);
-    this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
+    this.login = this.login.bind(this);
+    this.liftPayload = this.liftPayload.bind(this);
     this.renderScreens = this.renderScreens.bind(this);
   }
 
-  componentCleanup() {
-    sessionStorage.setItem(compName, JSON.stringify(this.state));
-  }
-
-  componentDidMount() {
-    window.addEventListener('beforeunload', this.componentCleanup);
-    const persistState = sessionStorage.getItem(compName);
-    if (persistState) {
-      try {
-        this.setState(JSON.parse(persistState));
-      } catch (e) {
-        console.log("Could not get fetch state from local storage for", compName);
-      }
-    }
-  }
-
-  componentWillUnmount() {
-    this.componentCleanup();
-    window.removeEventListener('beforeunload', this.componentCleanup);
-  }
-
   login() {
-    // TODO: Make API call to login
     this.setState({
       loggedIn: true
     });
   }
 
-  logout() {
-    // TODO: make API call to clear cookie
+  async logout() {
+    await makeCall({}, '/logout', 'get');
     this.setState({
       loggedIn: false
     });
@@ -85,12 +62,14 @@ export default class App extends Component {
           <Route exact path={PATHS.login} render={(props) => 
               <LoginForm
                 liftPayload={this.liftPayload}
+                login={this.login}
               />
             }
           />
           <Route exact path={PATHS.root} render={(props) => 
               this.state.loggedIn ? <StaffView/> : <LoginForm
                 liftPayload={this.liftPayload}
+                login={this.login}
               />
             }
           />
