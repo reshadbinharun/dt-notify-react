@@ -6,6 +6,7 @@ import Header from './components/Header';
 import LoginForm from './components/LoginForm';
 import StaffView from './components/StaffView';
 import Register from './screens/Register';
+import { makeCall } from "./apis";
 
 export const SCHOOL_NAME = process.env.REACT_APP_SCHOOL || 'Dhanmondi Tutorial';
 
@@ -53,7 +54,7 @@ export default class App extends Component {
   }
 
   async logout() {
-    const response = await makeCall(payload, '/logout', 'get');
+    const response = await makeCall({}, '/logout', 'get');
     this.setState({
       loggedIn: false
     });
