@@ -1,10 +1,11 @@
-const BACKEND = process.env.REACT_APP_BACKEND || 'http://localhost:5000'
+export const BACKEND = process.env.REACT_APP_BACKEND || 'http://localhost:5000'
 
 export const makeCall = async (payload, api, method) => {
     method = method.toUpperCase()
     var headers = new Headers();
     headers.append('Content-Type', 'application/json');
     headers.append('Accept', 'application/json');
+    headers.append('Cache-Control', 'no-cache');
     let requestHeader = {
         method: method,
         credentials: 'include',

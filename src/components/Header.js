@@ -70,7 +70,6 @@ export default class Header extends Component {
         }
         try {
             const result = await makeCall(payload, '/changePassword', 'post');
-            console.log("result is", result);
             if (!result || result.error) {
                 this.setState({
                     sendingPasswordRequest: false

@@ -5,6 +5,8 @@ import { Route, BrowserRouter as Router, Switch } from 'react-router-dom'
 import Header from './components/Header';
 import LoginForm from './components/LoginForm';
 import StaffView from './components/StaffView';
+import StudentView from './components/StudentView';
+import TeacherView from './components/TeacherView';
 import Register from './screens/Register';
 import { makeCall } from "./apis";
 
@@ -22,12 +24,13 @@ export default class App extends Component {
     this.state = {
       loggedIn: true,
       isStaff: true,
-      staffDetails: {},
+      userDetails: {},
     };
     this.logout = this.logout.bind(this);
     this.login = this.login.bind(this);
     this.liftPayload = this.liftPayload.bind(this);
     this.renderScreens = this.renderScreens.bind(this);
+    this.userView = this.userView.bind(this);
   }
 
   login() {
@@ -43,11 +46,24 @@ export default class App extends Component {
     });
   }
 
+  userView(role) {
+    switch (role.toUpperCase()) {
+      case 'STUDENT':
+        return <StudentView />
+      case 'STAFF':
+        return <StaffView />
+      case 'TEACHER':
+        return <TeacherView />
+      default:
+        return null
+    }
+  }
+
   liftPayload(details, isStaff) {
     if (isStaff) {
       this.setState({
         isStaff: true,
-        staffDetails: details
+        userDetails: details
       });
     }
   }
@@ -67,7 +83,10 @@ export default class App extends Component {
             }
           />
           <Route exact path={PATHS.root} render={(props) => 
-              this.state.loggedIn ? <StaffView/> : <LoginForm
+              this.state.loggedIn ? 
+              // this.userView(this.state.userDetails && this.state.userDetails.role) :
+              this.userView("TEACHER") :
+              <LoginForm
                 liftPayload={this.liftPayload}
                 login={this.login}
               />
@@ -89,7 +108,7 @@ export default class App extends Component {
           <Header
             loggedIn={this.state.loggedIn}
             logout={this.logout}
-            email={this.state.staffDetails && this.state.staffDetails.email}
+            email={this.state.userDetails && this.state.userDetails.email}
           />
           <Container>
             {this.renderScreens()}
