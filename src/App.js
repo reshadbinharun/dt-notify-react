@@ -85,8 +85,9 @@ export default class App extends Component {
           />
           <Route exact path={PATHS.root} render={(props) => 
               this.state.loggedIn ? 
+              // TODO: uncomment this and do not hardcode role
               // this.userView(this.state.userDetails && this.state.userDetails.role) :
-              this.userView("TEACHER") :
+              this.userView("STUDENT") :
               <LoginForm
                 liftPayload={this.liftPayload}
                 login={this.login}
