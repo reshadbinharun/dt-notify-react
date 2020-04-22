@@ -170,7 +170,7 @@ export default class Courses extends Component {
             <Container>
                 <Message
                     centered
-                    content={header}
+                    header={header}
                     style = {messageStyle}
                 />
                 {
