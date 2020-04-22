@@ -20,7 +20,10 @@ export default class TeacherView extends Component {
         switch(this.state.activeItem) {
             case PROFILE:
                 return <Profile
-                    isStudentView={false}
+                    role={'TEACHER'}
+                    id={this.props.id}
+                    name={this.props.name}
+                    phone={this.props.phone}
                 />
             case COURSES:
                 return <Courses

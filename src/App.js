@@ -21,6 +21,7 @@ export const PATHS = {
 export default class App extends Component {
   constructor() {
     super();
+    // TODO: change isStaff to a role string
     this.state = {
       loggedIn: true,
       isStaff: true,
