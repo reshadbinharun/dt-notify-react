@@ -13,47 +13,6 @@ export default class Courses extends Component {
     constructor() {
         super();
         this.state = {
-            // TODO: remove mock data
-            courses: [
-                {
-                    id: '1',
-                    name: 'Dummy course',
-                    grade: '11th',
-                    assignments: [
-                        {
-                            name: 'First assignment',
-                            submissionLink: 'https://www.google.com',
-                            fileLocation: 'https://www.facebook.com',
-                            date: '20-04-2020'
-                        },
-                        {
-                            name: 'Second assignment',
-                            submissionLink: 'https://www.google.com',
-                            fileLocation: 'https://www.facebook.com',
-                            date: '21-04-2020'
-                        }
-                    ]
-                },
-                {
-                    id: '2',
-                    name: 'Dummy course2',
-                    grade: '9th',
-                    assignments: [
-                        {
-                            name: 'Third assignment',
-                            submissionLink: 'https://www.google.com',
-                            fileLocation: 'https://www.facebook.com',
-                            date: '20-04-2020'
-                        },
-                        {
-                            name: 'Fourth assignment',
-                            submissionLink: 'https://www.google.com',
-                            fileLocation: 'https://www.facebook.com',
-                            date: '21-04-2020'
-                        }
-                    ]
-                }
-            ],
             openNewAssignment: false,
             openPastAssignments: false,
             openMessageModal: false
@@ -110,7 +69,7 @@ export default class Courses extends Component {
     }
 
     renderCourses() {
-        return this.state.courses && this.state.courses.map(course => {
+        return this.props.courses && this.props.courses.map(course => {
             return (
                 <div>
                     <MessageCourseModal
@@ -164,7 +123,7 @@ export default class Courses extends Component {
         })
     }
     render() {
-        const hasCourses = this.state.courses && this.state.courses.length
+        const hasCourses = this.props.courses && this.props.courses.length
         const header = hasCourses ? `Here are your courses` : `Your are currently not assigned any courses`
         return (
             <Container>

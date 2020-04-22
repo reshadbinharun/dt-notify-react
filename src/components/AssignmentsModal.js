@@ -32,7 +32,7 @@ export default class AssignmentModal extends Component {
                         {assignment.name}
                     </Card.Header>
                     <Card.Meta>
-                        Date posted: {assignment.date}
+                        Date due: {assignment.date}
                     </Card.Meta>
                 </Card.Content>
                 <Card.Content extra>

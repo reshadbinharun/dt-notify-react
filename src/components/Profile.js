@@ -30,7 +30,7 @@ export default class Profile extends Component {
     }
 
     infoHasChanged() {
-        this.props.name !== this.state.name || this.props.phone !== this.state.phone
+        return this.props.name !== this.state.name || this.props.phone !== this.state.phone
     }
 
     sendUpdate(e) {
