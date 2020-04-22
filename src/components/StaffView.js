@@ -3,6 +3,7 @@ import { Menu, Segment } from 'semantic-ui-react'
 import Messaging from './Messaging'
 import Management from './Management'
 import Tracking from './Tracking'
+import CourseManagement from './CourseManagement'
 
 const compName = 'StaffView_LS';
 
@@ -11,8 +12,8 @@ export const STUDENT_MANAGEMENT = 'Student Management';
 export const STUDENT_TRACKING = 'Student Tracking';
 export const STAFF_MANAGEMENT = 'Staff Management'
 export const STAFF_TRACKING = 'Staff Tracking'
+export const COURSES = 'Courses'
 
-//TODO: adapt to mentee login model --> currently copied from mentor login
 export default class StaffView extends Component {
     constructor(props){
         super(props);
@@ -64,6 +65,8 @@ export default class StaffView extends Component {
                 return <Tracking
                 isStudentView={false}
             />
+            case COURSES:
+                return <CourseManagement/>
             default:
                 return null
         }
@@ -97,6 +100,11 @@ export default class StaffView extends Component {
                 <Menu.Item
                     name={STAFF_TRACKING}
                     active={activeItem === STAFF_TRACKING}
+                    onClick={this.handleItemClick}
+                />
+                <Menu.Item
+                    name={COURSES}
+                    active={activeItem === COURSES}
                     onClick={this.handleItemClick}
                 />
             </Menu>

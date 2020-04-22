@@ -87,7 +87,7 @@ export default class App extends Component {
               this.state.loggedIn ? 
               // TODO: uncomment this and do not hardcode role
               // this.userView(this.state.userDetails && this.state.userDetails.role) :
-              this.userView("STUDENT") :
+              this.userView("STAFF") :
               <LoginForm
                 liftPayload={this.liftPayload}
                 login={this.login}
