@@ -5,8 +5,6 @@ import { Redirect } from "react-router-dom"
 import swal from "sweetalert";
 import { makeCall } from "../apis";
 
-const compName = 'SignUp_LS';
-
 let fieldStyle = {
     width: '100%',
 }
@@ -39,30 +37,8 @@ export default class Signup extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleChangeGrade = this.handleChangeGrade.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.componentCleanup = this.componentCleanup.bind(this);
         this.validateSubmitReadiness = this.validateSubmitReadiness.bind(this);
         this.goBack = this.goBack.bind(this);
-    }
-
-    componentCleanup() {
-        this.componentCleanup();
-        window.removeEventListener('beforeunload', this.componentCleanup);
-    }
-
-    componentDidMount() {
-        window.addEventListener('beforeunload', this.componentCleanup);
-        const persistState = sessionStorage.getItem(compName);
-        if (persistState) {
-          try {
-            this.setState(JSON.parse(persistState));
-          } catch (e) {
-            console.log("Could not get fetch state from local storage for", compName);
-          }
-        }
-    }
-
-    componentWillUnmount() {
-        sessionStorage.setItem(compName, JSON.stringify(this.state));
     }
 
     handleChange(e) {

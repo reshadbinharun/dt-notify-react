@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
 import { Menu, Segment } from 'semantic-ui-react'
+import { Redirect } from 'react-router-dom'
 import Messaging from './Messaging'
 import Management from './Management'
 import Tracking from './Tracking'
 import CourseManagement from './CourseManagement'
-
-const compName = 'StaffView_LS';
 
 export const MESSAGING = 'Messaging';
 export const STUDENT_MANAGEMENT = 'Student Management';
@@ -20,27 +19,6 @@ export default class StaffView extends Component {
         this.state = {
             activeItem: MESSAGING
         }
-    }
-
-    componentCleanup() {
-        sessionStorage.setItem(compName, JSON.stringify(this.state));
-    }
-
-    componentDidMount() {
-        window.addEventListener('beforeunload', this.componentCleanup);
-        const persistState = sessionStorage.getItem(compName);
-            if (persistState) {
-            try {
-                this.setState(JSON.parse(persistState));
-            } catch (e) {
-                console.log("Could not get fetch state from local storage for", compName);
-            }
-        }
-    }
-
-    componentWillUnmount() {
-        this.componentCleanup();
-        window.removeEventListener('beforeunload', this.componentCleanup);
     }
 
     handleItemClick = (e, { name }) => this.setState({ activeItem: name })
@@ -73,6 +51,9 @@ export default class StaffView extends Component {
     }
 
     render() {
+        if (!this.props.isLoggedIn) {
+            return <Redirect to="/login" />
+        }
         const { activeItem } = this.state
         return (
         <div>

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import 'semantic-ui-css/semantic.min.css';
-import { Container, Segment } from 'semantic-ui-react';
+import { Container, Segment, Message } from 'semantic-ui-react';
 import { Route, BrowserRouter as Router, Switch } from 'react-router-dom'
 import Header from './components/Header';
 import LoginForm from './components/LoginForm';
@@ -23,7 +23,8 @@ export default class App extends Component {
     super();
     // TODO: change isStaff to a role string
     this.state = {
-      loggedIn: true,
+      loggedIn: false,
+      fetchingAuth: true,
       isStaff: true,
       userDetails: {},
     };
@@ -32,6 +33,31 @@ export default class App extends Component {
     this.liftPayload = this.liftPayload.bind(this);
     this.renderScreens = this.renderScreens.bind(this);
     this.userView = this.userView.bind(this);
+  }
+
+  componentDidMount() {
+    this.setState({
+      fetchingAuth: true
+    }, async () => {
+      try {
+        const result = await makeCall({}, '/isLoggedIn', 'get')
+        if (!result || result.error) {
+            this.setState({
+                fetchingAuth: false
+            });
+        } else {
+            this.setState({
+                fetchingAuth: false,
+                loggedIn: true
+            });
+        }
+      } catch (e) {
+          this.setState({
+            fetchingAuth: false,
+          });
+          console.log("Error: App#componentDidMount", e)
+      }
+    })
   }
 
   login() {
@@ -50,11 +76,17 @@ export default class App extends Component {
   userView(role) {
     switch (role.toUpperCase()) {
       case 'STUDENT':
-        return <StudentView />
+        return <StudentView 
+          isLoggedIn={this.state.loggedIn}
+        />
       case 'STAFF':
-        return <StaffView />
+        return <StaffView 
+          isLoggedIn={this.state.loggedIn}
+        />
       case 'TEACHER':
-        return <TeacherView />
+        return <TeacherView
+          isLoggedIn={this.state.loggedIn}
+        />
       default:
         return null
     }
@@ -78,20 +110,16 @@ export default class App extends Component {
           />
           <Route exact path={PATHS.login} render={(props) => 
               <LoginForm
+                isLoggedIn={this.state.loggedIn}
                 liftPayload={this.liftPayload}
                 login={this.login}
               />
             }
           />
           <Route exact path={PATHS.root} render={(props) => 
-              this.state.loggedIn ? 
               // TODO: uncomment this and do not hardcode role
               // this.userView(this.state.userDetails && this.state.userDetails.role) :
-              this.userView("STUDENT") :
-              <LoginForm
-                liftPayload={this.liftPayload}
-                login={this.login}
-              />
+              this.userView("STAFF")
             }
           />
           <Route>
@@ -105,18 +133,38 @@ export default class App extends Component {
 
   render() {
     return (
-      <div>
         <Router>
-          <Header
-            loggedIn={this.state.loggedIn}
-            logout={this.logout}
-            email={this.state.userDetails && this.state.userDetails.email}
-          />
-          <Container>
-            {this.renderScreens()}
-          </Container>
+          {this.state.fetchingAuth ? 
+            <>
+              <Message
+                style={{
+                  width: '100%',
+                  height: '100%',
+                }}
+                header={"Fetching Authorization, please wait..."}
+              />
+              
+              <Segment
+                style={{
+                  width: '100%',
+                  height: '300px',
+                }}
+                loading={true}
+              >
+              </Segment>
+            </> :
+            <>
+            <Header
+              loggedIn={this.state.loggedIn}
+              logout={this.logout}
+              email={this.state.userDetails && this.state.userDetails.email}
+            />
+            <Container>
+              {this.renderScreens()}
+            </Container>
+            </>
+          }
         </Router>
-      </div>
     )
   }
 }
