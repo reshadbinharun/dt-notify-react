@@ -15,6 +15,7 @@ export default class StudentView extends Component {
             // TODO: remove mock data
             assignments: [
                 {
+                    id: '1',
                     name: 'Third assignment',
                     course: 'dummy course',
                     submissionLink: 'https://www.google.com',
@@ -22,6 +23,7 @@ export default class StudentView extends Component {
                     date: '20-04-2020'
                 },
                 {
+                    id: '2',
                     name: 'Fourth assignment',
                     course: 'dummy course2',
                     submissionLink: 'https://www.google.com',
@@ -50,7 +52,7 @@ export default class StudentView extends Component {
             }
         } catch (e) {
             this.setState({fetching: false});
-            console.log("Error: StudentView#componentDidMoutn", e)
+            console.log("Error: StudentView#componentDidMount", e)
         }
     }
 
@@ -68,6 +70,7 @@ export default class StudentView extends Component {
             case ASSIGNMENTS:
                 return <Assignments
                     assignments={this.state.assignments}
+                    studentId={this.props.id}
                 />
             default:
                 return null
