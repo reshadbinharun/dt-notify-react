@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Menu, Segment} from 'semantic-ui-react'
+import { Redirect } from 'react-router-dom'
 import Profile from "./Profile";
 import Courses from "./Courses";
 import { makeCall } from "../apis";
@@ -99,6 +100,9 @@ export default class TeacherView extends Component {
     }
 
     render() {
+        if (!this.props.isLoggedIn) {
+            return <Redirect to="/login" />
+        }
         const { activeItem } = this.state
         return (
         <Segment loading={this.state.fetching}>

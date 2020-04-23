@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { Menu, Segment, Container} from 'semantic-ui-react'
+import { Menu, Segment } from 'semantic-ui-react'
+import { Redirect } from 'react-router-dom'
 import Profile from "./Profile";
 import Assignments from "./Assignments";
 import { makeCall } from "../apis";
@@ -78,6 +79,9 @@ export default class StudentView extends Component {
     }
 
     render() {
+        if (!this.props.isLoggedIn) {
+            return <Redirect to="/login" />
+        }
         const { activeItem } = this.state
         return (
             <Segment loading={this.state.fetching}>

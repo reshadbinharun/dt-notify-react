@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Modal, Button, Form } from 'semantic-ui-react'
+import { Modal, Button } from 'semantic-ui-react'
 import { makeCall } from "../apis";
 import swal from "sweetalert"
 
