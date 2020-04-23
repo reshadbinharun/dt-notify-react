@@ -6,11 +6,6 @@ import { BACKEND } from "../apis";
 import DatePicker from "react-datepicker";
  
 import "react-datepicker/dist/react-datepicker.css";
-
-let buttonStyle = {
-    width: '100px',
-}
-
 /*
     courseId
 */
