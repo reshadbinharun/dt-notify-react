@@ -26,12 +26,33 @@ export default class AddCourseModal extends Component {
             course: '',
             teacherId: '',
             grade: '',
-            sendingRequest: false
+            sendingRequest: false,
+            teachers: []
         }
         this.handleGradeSelect = this.handleGradeSelect.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleTeacherSelect = this.handleTeacherSelect.bind(this);
         this.addCourse = this.addCourse.bind(this);
+    }
+
+    async componentDidMount() {
+        const endPoint = `/staff/teachers`
+        try {
+            const result = await makeCall({}, endPoint, 'get')
+            if (!result || result.error) {
+                this.setState({
+                    fetching: false,
+                });
+            } else {
+                this.setState({
+                    fetching: false,
+                    teachers: result.teachers
+                });
+            }
+        } catch (e) {
+            this.setState({fetching: false});
+            console.log("Error: AddCourseModal#componentDidMount", e)
+        }
     }
 
     handleGradeSelect(e, {value}) {
@@ -59,9 +80,9 @@ export default class AddCourseModal extends Component {
         e.preventDefault();
         this.setState({sendingRequest: true});
         const payload = {
-            teacherId: this.state.teacherId,
+            teacher: this.state.teacherId,
             grade: this.state.grade,
-            course: this.state.course
+            name: this.state.course
         };
         const endPoint = '/staff/course'
         try {
@@ -85,10 +106,11 @@ export default class AddCourseModal extends Component {
                 }, () => {
                     swal({
                         title: "Success!",
-                        text: `You've successfully added the course!`,
+                        text: `You've successfully added the course! Please refresh to see new course.`,
                         icon: "success",
+                    }).then(() => {
+                        this.props.close();
                     });
-                    this.props.close();
                 });
             }
         } catch (e) {
@@ -97,10 +119,10 @@ export default class AddCourseModal extends Component {
     }
 
     render() {
-        const teacherOptions = this.props.teachers && this.props.teachers.map(teacher => {
+        const teacherOptions = this.state.teachers && this.state.teachers.map(teacher => {
             return {
-                key: teacher.id,
-                value: teacher.id,
+                key: teacher._id,
+                value: teacher._id,
                 text: teacher.name
             }
         })

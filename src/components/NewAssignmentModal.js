@@ -68,7 +68,7 @@ export default class NewAssignmentModal extends Component {
                     title: "Success!",
                     text: `You have successfully posted the assignment!`,
                     icon: "success",
-                }, () => {
+                }).then(() => {
                     this.setState({submitting: false})
                     this.props.close();
                 })

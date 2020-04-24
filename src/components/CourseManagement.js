@@ -13,34 +13,7 @@ export default class CourseManagement extends Component {
     constructor() {
         super();
         this.state = {
-            courses: [
-                {
-                    id: '1',
-                    name: 'dummy course',
-                    teacher: 'teacher 1',
-                    grade: '11th'
-                },
-                {
-                    id: '2',
-                    name: 'dummy course2',
-                    teacher: 'teacher 2',
-                    grade: '12th'
-                },
-            ],
-            teachers: [
-                {
-                    id: '1',
-                    name: 'teacher 1'
-                },
-                {
-                    id: '2',
-                    name: 'teacher 2'
-                },
-                {
-                    id: '3',
-                    name: 'teacher 3'
-                }
-            ],
+            courses: [],
             fetching: true,
             showConfirmDeleteModal: false,
             showAddCourseModal: false,
@@ -59,20 +32,18 @@ export default class CourseManagement extends Component {
         e.preventDefault();
         this.setState({
             showConfirmDeleteModal: true,
-            courseIdToDelete: course.id,
+            courseIdToDelete: course._id,
             courseNameToDelete: course.name
         })
     }
 
-    closeDeleteCourseModal(e) {
-        e.preventDefault();
+    closeDeleteCourseModal() {
         this.setState({
             showConfirmDeleteModal: false
         })
     }
 
-    closeAddCourseModal(e) {
-        e.preventDefault();
+    closeAddCourseModal() {
         this.setState({
             showAddCourseModal: false
         })
@@ -86,18 +57,17 @@ export default class CourseManagement extends Component {
     }
 
     async componentDidMount() {
-        const endPoint = `/coursesAndTeachers`
+        const endPoint = `/staff/courses`
         try {
             const result = await makeCall({}, endPoint, 'get')
             if (!result || result.error) {
                 this.setState({
                     fetching: false,
-                    courses: result.courses,
-                    teachers: result.teachers,
                 });
             } else {
                 this.setState({
-                    fetching: false
+                    fetching: false,
+                    courses: result.courses
                 });
             }
         } catch (e) {
@@ -120,7 +90,7 @@ export default class CourseManagement extends Component {
                                     <b>Grade: {course.grade}</b>
                                 </Card.Meta>
                                 <Card.Meta>
-                                    Teacher: {course.teacher}
+                                    Teacher: {course.teacherName}
                                 </Card.Meta>
                             </Grid.Column>
                             <Grid.Column width={4}>

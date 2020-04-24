@@ -40,9 +40,9 @@ export default class MessageCourseModal extends Component {
                         title: "Success!",
                         text: `You have successfully messaged the class.`,
                         icon: "success",
-                    }, () => {
-                        this.props.close()
-                    });
+                    }).then(() => {
+                        this.props.close();
+                    })
                 }
             } catch (e) {
                 console.log("Error: MessageCourseModal#sendMessage", e);

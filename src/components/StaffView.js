@@ -9,8 +9,8 @@ import CourseManagement from './CourseManagement'
 export const MESSAGING = 'Messaging';
 export const STUDENT_MANAGEMENT = 'Student Management';
 export const STUDENT_TRACKING = 'Student Tracking';
-export const STAFF_MANAGEMENT = 'Staff Management'
-export const STAFF_TRACKING = 'Staff Tracking'
+export const TEACHER_MANAGEMENT = 'Teacher Management'
+export const TEACHER_TRACKING = 'Teacher Tracking'
 export const COURSES = 'Courses'
 
 export default class StaffView extends Component {
@@ -35,11 +35,11 @@ export default class StaffView extends Component {
                 return <Tracking
                     isStudentView={true}
                 />
-            case STAFF_MANAGEMENT:
+            case TEACHER_MANAGEMENT:
                 return <Management
                     isStudentView={false}
                 />
-            case STAFF_TRACKING:
+            case TEACHER_TRACKING:
                 return <Tracking
                 isStudentView={false}
             />
@@ -74,13 +74,13 @@ export default class StaffView extends Component {
                     onClick={this.handleItemClick}
                 />
                 <Menu.Item
-                    name={STAFF_MANAGEMENT}
-                    active={activeItem === STAFF_MANAGEMENT}
+                    name={TEACHER_MANAGEMENT}
+                    active={activeItem === TEACHER_MANAGEMENT}
                     onClick={this.handleItemClick}
                 />
                 <Menu.Item
-                    name={STAFF_TRACKING}
-                    active={activeItem === STAFF_TRACKING}
+                    name={TEACHER_TRACKING}
+                    active={activeItem === TEACHER_TRACKING}
                     onClick={this.handleItemClick}
                 />
                 <Menu.Item

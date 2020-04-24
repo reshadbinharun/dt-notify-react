@@ -22,24 +22,25 @@ export default class DeleteCourseModal extends Component {
             sendingRequest: true
         }, async () => {
             try {
-                const result = await makeCall({}, `/course/${this.props.courseId}`, 'post');
+                const result = await makeCall({}, `/staff/course/${this.props.courseId}`, 'delete');
                 this.setState({
                     sendingRequest: false,
                 });
                 if (!result || result.error) {
                     swal({
                         title: "Error!",
-                        text: `There was an error messaging the class, please try again.`,
+                        text: `There was an error deleting the course, please try again.`,
                         icon: "error",
                     });
                 } else {
                     swal({
                         title: "Success!",
-                        text: `You have successfully messaged the class.`,
+                        text: `You have successfully deleted the course. Please refresh to see updated list.`,
                         icon: "success",
-                    }, () => {
-                        this.props.close()
-                    });
+                    }).then(() => {
+                        this.props.close();
+                    })
+                    
                 }
             } catch (e) {
                 this.setState({

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, Grid, Message, Select, Button, Modal, Form, Table } from 'semantic-ui-react';
+import { Segment, Grid, Message, Select, Button, Modal, Form, Table } from 'semantic-ui-react';
 import SearchBar from "./SearchBar";
 import swal from 'sweetalert';
 import { makeCall } from '../apis';
@@ -19,7 +19,7 @@ export default class StaffView extends Component {
         super(props);
         this.state = {
             students: [],
-            staff: [],
+            teachers: [],
             searchTerms: '',
             searchMode: false,
             searchGrade: '',
@@ -27,7 +27,8 @@ export default class StaffView extends Component {
             message: '',
             recipientEmail: '',
             recipientName: '',
-            sendingRequest: false
+            sendingRequest: false,
+            fetching: false,
         }
         this.generateList = this.generateList.bind(this);
         this.updateSearchTerms = this.updateSearchTerms.bind(this);
@@ -39,24 +40,37 @@ export default class StaffView extends Component {
         this.filterResults = this.filterResults.bind(this);
     }
 
-    async componentDidMount() {
-        if (!this.props.isStudentView) {
-            let result = await makeCall({}, '/staff/students', 'GET');
-            if (result && !result.error) {
-                const students = result.students
+    componentDidMount() {
+        this.setState({
+            fetching: true
+        }, async () => {
+            try {
+                if (!this.props.isStudentView) {
+                    let result = await makeCall({}, '/staff/teachers', 'GET');
+                    if (result && !result.error) {
+                        const teachers = result.teachers;
+                        this.setState({
+                            teachers,
+                            fetching: false
+                        });
+                    }
+                } else if (this.props.isStudentView) {
+                    let result = await makeCall({}, '/staff/students', 'GET');
+                    if (result && !result.error) {
+                        const students = result.students;
+                        this.setState({
+                            students,
+                            fetching: false
+                        });
+                    }
+                }
+            } catch (e) {
+                console.log("Error: Tracking#componentDidMount", e)
                 this.setState({
-                    students
-                });
+                    fetching: false
+                })
             }
-        } else if (this.props.isStudentView) {
-            let result = await makeCall({}, '/staff/staff', 'GET');
-            if (result && !result.error) {
-                const staff = result.staff;
-                this.setState({
-                    staff
-                });
-            }
-        }
+        })
     }
 
     handleChange(e) {
@@ -84,13 +98,13 @@ export default class StaffView extends Component {
                 if (!result || result.error) {
                     swal({
                         title: "Error!",
-                        text: `There was an error messaging the ${this.props.isStudentView ? 'student' : 'staff'}, please try again.`,
+                        text: `There was an error messaging the ${this.props.isStudentView ? 'student' : 'teacher'}, please try again.`,
                         icon: "error",
                     });
                 } else {
                     swal({
                         title: "Success!",
-                        text: `You have successfully messaged the ${this.props.isStudentView ? 'student' : 'staff'}.`,
+                        text: `You have successfully messaged the ${this.props.isStudentView ? 'student' : 'teacher'}.`,
                         icon: "success",
                     });
                 }
@@ -253,7 +267,7 @@ export default class StaffView extends Component {
             margin: '5px',
         }
         return (
-            <Card centered={true} style={cardStyle}>
+            <Segment loading={this.state.fetching} centered={true} style={cardStyle}>
                 <Grid centered={true} rows={3}>
                     <Grid.Row centered style={{'margin': "20px 0 10px 0"}}>
                         {this.props.isStudentView ? 
@@ -272,7 +286,7 @@ export default class StaffView extends Component {
                     <Grid.Row>
                         <Message
                             style={{'margin': "20px 0 10px 0", width: '80%'}}
-                            content={`The following are all the verified and approved ${this.props.isStudentView ? 'students' : 'staff'} in the system.`}
+                            content={`The following are all the verified and approved ${this.props.isStudentView ? 'students' : 'teachers'} in the system.`}
                         />
                     </Grid.Row>
                     <Grid.Row
@@ -281,16 +295,16 @@ export default class StaffView extends Component {
                         {
                             this.state.searchMode ?
                             this.generateList(this.filterResults(
-                                this.props.isStudentView ? this.state.students : this.state.staff
+                                this.props.isStudentView ? this.state.students : this.state.teachers
                                 )
                             ) :
                             this.generateList(
-                                this.props.isStudentView ? this.state.students : this.state.staff
+                                this.props.isStudentView ? this.state.students : this.state.teachers
                                 )
                         }
                     </Grid.Row>
                 </Grid>
-            </Card>
+            </Segment>
         )
     }
 }
