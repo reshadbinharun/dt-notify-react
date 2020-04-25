@@ -43,16 +43,16 @@ export default class Messaging extends React.Component {
     getGrades() {
         let grades = [];
         if (this.state.grade9) {
-            grades.push('9th');
+            grades.push(9);
         }
         if (this.state.grade10) {
-            grades.push('10th');
+            grades.push(10);
         }
         if (this.state.grade11) {
-            grades.push('11th');
+            grades.push(11);
         }
         if (this.state.grade12) {
-            grades.push('12th');
+            grades.push(12);
         }
         return grades
     }
@@ -61,14 +61,14 @@ export default class Messaging extends React.Component {
         e.preventDefault();
         const payload = {
             subject: this.state.subject,
-            message: this.state.message,
+            body: this.state.message,
             grades: this.getGrades()
         }
         this.setState({
             sending: true
         }, async () => {
             try {
-                const result = await makeCall(payload, '/sendMessages', 'post');
+                const result = await makeCall(payload, '/staff/sendMessages', 'post');
                 if (!result || result.error) {
                     this.setState({
                         sending: false

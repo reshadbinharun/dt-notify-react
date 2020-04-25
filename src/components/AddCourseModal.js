@@ -3,10 +3,11 @@ import { Modal, Form, Select, Button } from 'semantic-ui-react'
 import swal from "sweetalert"
 import { makeCall } from "../apis"
 
-const gradeOptions = ['6th', '7th', '8th', '9th', '10th', '11th', '12th'].map(grade => {
+const gradeOptions = [9, 10, 11, 12].map(grade => {
+    let displayVal = grade.toString() + "th"
     return {
-        text: grade,
-        key: grade,
+        text: displayVal,
+        key: displayVal,
         value: grade
     }
 })
@@ -25,7 +26,7 @@ export default class AddCourseModal extends Component {
         this.state = {
             course: '',
             teacherId: '',
-            grade: '',
+            grade: null,
             sendingRequest: false,
             teachers: []
         }
@@ -101,7 +102,7 @@ export default class AddCourseModal extends Component {
                 this.setState({
                     sendingRequest: false,
                     course: '',
-                    grade: '',
+                    grade: null,
                     teacherId: ''
                 }, () => {
                     swal({

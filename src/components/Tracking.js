@@ -4,8 +4,11 @@ import SearchBar from "./SearchBar";
 import swal from 'sweetalert';
 import { makeCall } from '../apis';
 
-const gradeOptions = ['All Grades','9th', '10th', '11th', '12th'].map(val => {
-    return {key: val, text: val, value: val}
+const gradeOptions = [0, 9, 10, 11, 12].map(val => {
+    let displayVal = val === 0 ? "All Grades" : val.toString() + "th"
+    return {
+        key: val, text: displayVal, value: val
+    }
 });
 
 const MAX_CHARS_MESSAGE = 1000;
@@ -22,7 +25,7 @@ export default class StaffView extends Component {
             teachers: [],
             searchTerms: '',
             searchMode: false,
-            searchGrade: '',
+            searchGrade: 0,
             modalOpen: false,
             message: '',
             recipientEmail: '',
@@ -150,7 +153,7 @@ export default class StaffView extends Component {
                     return (
                     <Table.Row>
                         <Table.Cell>{member.name}</Table.Cell>
-                        {this.props.isStudentView ? <Table.Cell>{member.grade}</Table.Cell> : null}
+                        {this.props.isStudentView ? <Table.Cell>{member.grade && member.grade.toString() + "th"}</Table.Cell> : null}
                         <Table.Cell>{member.email}</Table.Cell>
                         <Table.Cell>
                             <Modal
@@ -234,16 +237,17 @@ export default class StaffView extends Component {
         this.setState({
             searchMode: false,
             searchTerms: '',
-            searchGrade: ''
+            searchGrade: 0
         })
     }
 
     filterResults(MemberObjects) {
         // eslint-disable-next-line
         let gradeFilteredMembers = MemberObjects;
-        if (this.state.searchGrade && this.state.searchGrade !== 'All Grades') {
+        // 0 implies an all grades selection
+        if (this.state.searchGrade && this.state.searchGrade !== 0) {
             gradeFilteredMembers = MemberObjects.filter(member => {
-                return member.grade === this.state.searchGrade
+                return (member.grade) === this.state.searchGrade
             });
         }
         if (this.state.searchTerms) {

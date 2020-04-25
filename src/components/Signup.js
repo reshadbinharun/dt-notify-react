@@ -13,8 +13,13 @@ let messageStyle = {
     margin: '10px',
 }
 
-const gradeOptions = ['9th', '10th', '11th', '12th'].map(val => {
-    return {key: val, text: val, value: val}
+const gradeOptions = [9, 10, 11, 12].map(val => {
+    let displayVal = val.toString() + "th"
+    return {
+        key: displayVal,
+        text: displayVal,
+        value: val
+    }
 });
 
 /*
