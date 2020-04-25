@@ -41,21 +41,29 @@ export default class Management extends React.Component {
             fetching: true
         }, async () => {
             try {
-                if (!this.props.isStudentView) {
-                    let result = await makeCall({}, '/staff/students', 'GET');
+                if (this.props.isStudentView) {
+                    let result = await makeCall({}, `/staff/pending/students`, 'GET');
                     if (result && !result.error) {
-                        const pendingStudents = result.students && result.students.filter(student => !student.approved)
+                        const pendingStudents = result.students
                         this.setState({
                             pendingStudents,
                             fetching: false
                         });
+                    } else {
+                        this.setState({
+                            fetching: false
+                        });
                     }
-                } else if (this.props.isStudentView) {
-                    let result = await makeCall({}, '/staff/teachers', 'GET');
+                } else if (!this.props.isStudentView) {
+                    let result = await makeCall({}, '/staff/pending/teachers', 'GET');
                     if (result && !result.error) {
-                        const pendingTeachers = result.teachers && result.teachers.filter(teacher => !teacher.approved)
+                        const pendingTeachers = result.teachers
                         this.setState({
                             pendingTeachers,
+                            fetching: false
+                        });
+                    } else {
+                        this.setState({
                             fetching: false
                         });
                     }

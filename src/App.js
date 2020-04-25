@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import 'semantic-ui-css/semantic.min.css';
 import { Container, Segment, Message } from 'semantic-ui-react';
-import { Route, BrowserRouter as Router, Switch } from 'react-router-dom'
+import { Route, BrowserRouter as Router, Switch, Redirect } from 'react-router-dom'
 import Header from './components/Header';
 import LoginForm from './components/LoginForm';
 import StaffView from './components/StaffView';
@@ -11,6 +11,7 @@ import Register from './screens/Register';
 import { makeCall } from "./apis";
 
 export const SCHOOL_NAME = process.env.REACT_APP_SCHOOL || 'Dhanmondi Tutorial';
+const Role_LS = `DT_Notify_ROLE`
 
 export const PATHS = {
   root: "/",
@@ -21,11 +22,10 @@ export const PATHS = {
 export default class App extends Component {
   constructor() {
     super();
-    // TODO: change isStaff to a role string
     this.state = {
       loggedIn: false,
       fetchingAuth: true,
-      isStaff: true,
+      role: null,
       userDetails: {},
     };
     this.logout = this.logout.bind(this);
@@ -41,15 +41,13 @@ export default class App extends Component {
     }, async () => {
       try {
         const result = await makeCall({}, '/isLoggedIn', 'get')
-        if (!result || result.error) {
-            this.setState({
-                fetchingAuth: false
-            });
-        } else {
-            this.setState({
-                fetchingAuth: false,
-                loggedIn: true
-            });
+        this.setState({
+          fetchingAuth: false
+        });
+        if (result || !result.error) {
+          this.setState({
+            loggedIn: true
+          });
         }
       } catch (e) {
           this.setState({
@@ -58,6 +56,14 @@ export default class App extends Component {
           console.log("Error: App#componentDidMount", e)
       }
     })
+    const persistedRole = localStorage.getItem(Role_LS);
+    if (persistedRole) {
+      try {
+        this.setState({role: persistedRole});
+      } catch (e) {
+        console.log("Could not get fetch state from local storage for", Role_LS);
+      }
+    }
   }
 
   login() {
@@ -74,7 +80,7 @@ export default class App extends Component {
   }
 
   userView(role) {
-    switch (role.toUpperCase()) {
+    switch (role && role.toUpperCase()) {
       case 'STUDENT':
         return <StudentView 
           isLoggedIn={this.state.loggedIn}
@@ -92,13 +98,13 @@ export default class App extends Component {
     }
   }
 
-  liftPayload(details, isStaff) {
-    if (isStaff) {
+  liftPayload(details) {
       this.setState({
-        isStaff: true,
-        userDetails: details
+        role : details.userRole,
+        userDetails: details.userToSend
+      }, () => {
+        localStorage.setItem(Role_LS, this.state.role)
       });
-    }
   }
 
   renderScreens() {
@@ -117,9 +123,7 @@ export default class App extends Component {
             }
           />
           <Route exact path={PATHS.root} render={(props) => 
-              // TODO: uncomment this and do not hardcode role
-              // this.userView(this.state.userDetails && this.state.userDetails.role) :
-              this.userView("STAFF")
+              this.state.loggedIn ? this.userView(this.state.role) : <Redirect to="/login" />
             }
           />
           <Route>

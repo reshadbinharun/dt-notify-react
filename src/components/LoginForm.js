@@ -62,7 +62,7 @@ export default class LoginForm extends React.Component {
                 this.setState({
                     loginLoading: false,
                 },() => {
-                    this.props.liftPayload(result, true);
+                    this.props.liftPayload(result);
                     this.props.login();
                 });
             }
