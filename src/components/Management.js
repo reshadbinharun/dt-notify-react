@@ -1,21 +1,31 @@
 import React from 'react'
-import { Grid, Message, Segment, Form, Button, TextArea, Icon, Table } from 'semantic-ui-react'
+import { Grid, Message, Segment, Form, Button, TextArea, Icon, Table, Select } from 'semantic-ui-react'
 import { makeCall } from '../apis';
 import swal from "sweetalert";
+
+const gradeOptions = [9, 10, 11, 12].map(grade => {
+    let displayVal = grade.toString() + "th"
+    return {
+        text: displayVal,
+        key: displayVal,
+        value: grade
+    }
+})
 
 /*
 props:
 - isStudentView: boolean
 */
-export default class Messaging extends React.Component {
-    constructor() {
-        super();
+export default class Management extends React.Component {
+    constructor(props) {
+        super(props);
         this.state = {
             emailString: '',
             pendingStudents: [],
             pendingTeachers: [],
             fetching: false,
-            sendingRequest: false
+            sendingRequest: false,
+            gradeToInvite: null
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleInvite = this.handleInvite.bind(this);
@@ -23,6 +33,7 @@ export default class Messaging extends React.Component {
         this.handleApproval = this.handleApproval.bind(this);
         this.handleReject = this.handleReject.bind(this);
         this.shouldShowTable = this.shouldShowTable.bind(this);
+        this.handleGradeSelect = this.handleGradeSelect.bind(this);
     }
 
     componentDidMount() {
@@ -66,14 +77,22 @@ export default class Messaging extends React.Component {
         this.setState(change)
     }
 
+    handleGradeSelect(e, {value}) {
+        e.preventDefault();
+        this.setState({
+            gradeToInvite: value
+        });
+    }
+
     async handleInvite(e) {
         e.preventDefault();
         const emailsArr = this.state.emailString.replace(/\s/g, '').split(',');
         this.setState({sendingRequest: true});
         const payload = {
-            emails: emailsArr
+            emails: emailsArr,
+            grade: this.state.gradeToInvite
         };
-        const endPoint = this.props.isStudentView ? '/invite/students' : '/invite/teachers'
+        const endPoint = this.props.isStudentView ? '/staff/invite/students' : '/staff/invite/teachers'
         try {
             const result = await makeCall(payload, endPoint, 'post')
             if (!result || result.error) {
@@ -89,7 +108,8 @@ export default class Messaging extends React.Component {
             } else {
                 this.setState({
                     sendingRequest: false,
-                    emailString: ''
+                    emailString: '',
+                    gradeToInvite: null
                 }, () => {
                     swal({
                         title: "Success!",
@@ -99,6 +119,15 @@ export default class Messaging extends React.Component {
                 });
             }
         } catch (e) {
+            this.setState({
+                sendingRequest: false
+            }, () => {
+                swal({
+                    title: "Error!",
+                    text: `There was an error inviting the ${this.props.isStudentView ? 'student' : 'teachers'}, please try again.`,
+                    icon: "error",
+                });
+            });
             console.log("Error: Management#handleInvite", e)
         }
     }
@@ -304,6 +333,12 @@ export default class Messaging extends React.Component {
                                 content={`Invite ${this.props.isStudentView ? 'student' : 'teacher'} to system. Enter all emails to invite as a comma-separated list.`}
                             />
                         </Grid.Row>
+                        {
+                            this.props.isStudentView ? 
+                            <Grid.Row>
+                                <Select placeholder="Select grade to invite" options={gradeOptions} defaultValue={null} name="gradeToInvite" onChange={this.handleGradeSelect}/>
+                            </Grid.Row> : null
+                        }
                         <Grid.Row>
                             <Grid.Column width={12}>
                                 <TextArea 
@@ -319,7 +354,7 @@ export default class Messaging extends React.Component {
                                 <Button
                                     onClick={this.handleInvite}
                                     loading={this.state.sendingRequest}
-                                    disabled={!this.state.emailString || this.state.sendingRequest}
+                                    disabled={!this.state.emailString || this.state.sendingRequest || (this.props.isStudentView && !this.state.gradeToInvite)}
                                 >
                                     <Icon name="paper plane"/>
                                     Invite
