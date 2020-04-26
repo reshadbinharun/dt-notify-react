@@ -11,7 +11,7 @@ import Register from './screens/Register';
 import { makeCall } from "./apis";
 
 export const SCHOOL_NAME = process.env.REACT_APP_SCHOOL || 'Dhanmondi Tutorial';
-const Role_LS = `DT_Notify_ROLE`
+const App_LS = `DT_Notify_App`
 
 export const PATHS = {
   root: "/",
@@ -56,12 +56,14 @@ export default class App extends Component {
           console.log("Error: App#componentDidMount", e)
       }
     })
-    const persistedRole = localStorage.getItem(Role_LS);
-    if (persistedRole) {
+    const persistedState = JSON.parse(localStorage.getItem(App_LS));
+    if (persistedState) {
       try {
-        this.setState({role: persistedRole});
+        const role = persistedState.role;
+        const userDetails = persistedState.userDetails;
+        this.setState({role, userDetails});
       } catch (e) {
-        console.log("Could not get fetch state from local storage for", Role_LS);
+        console.log(`Could not get fetch state from local storage for ${App_LS}`, e);
       }
     }
   }
@@ -84,6 +86,7 @@ export default class App extends Component {
       case 'STUDENT':
         return <StudentView 
           isLoggedIn={this.state.loggedIn}
+          user={this.state.userDetails}
         />
       case 'STAFF':
         return <StaffView 
@@ -92,6 +95,7 @@ export default class App extends Component {
       case 'TEACHER':
         return <TeacherView
           isLoggedIn={this.state.loggedIn}
+          user={this.state.userDetails}
         />
       default:
         return null
@@ -103,7 +107,7 @@ export default class App extends Component {
         role : details.userRole,
         userDetails: details.userToSend
       }, () => {
-        localStorage.setItem(Role_LS, this.state.role)
+        localStorage.setItem(App_LS, JSON.stringify(this.state))
       });
   }
 

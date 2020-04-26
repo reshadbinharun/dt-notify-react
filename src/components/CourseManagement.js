@@ -87,7 +87,7 @@ export default class CourseManagement extends Component {
                                     {course.name}
                                 </Card.Header>
                                 <Card.Meta>
-                                    <b>Grade: {course.grade}</b>
+                                    <b>Grade: {course.grade && course.grade.toString() + "th"}</b>
                                 </Card.Meta>
                                 <Card.Meta>
                                     Teacher: {course.teacherName}

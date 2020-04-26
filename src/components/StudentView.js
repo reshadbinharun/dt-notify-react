@@ -13,35 +13,18 @@ export default class StudentView extends Component {
         super(props);
         this.state = {
             activeItem: ASSIGNMENTS,
-            // TODO: remove mock data
-            assignments: [
-                {
-                    id: '1',
-                    name: 'Third assignment',
-                    course: 'dummy course',
-                    submissionLink: 'https://www.google.com',
-                    fileLocation: 'https://www.facebook.com',
-                    date: '20-04-2020'
-                },
-                {
-                    id: '2',
-                    name: 'Fourth assignment',
-                    course: 'dummy course2',
-                    submissionLink: 'https://www.google.com',
-                    fileLocation: 'https://www.facebook.com',
-                    date: '21-04-2020'
-                }
-            ],
+            assignments: [],
             fetching: true
         }
     }
 
     async componentDidMount() {
         this.setState({fetching: true});
-        const endPoint = `/assignments/${this.props.id}`
+        const endPoint = `/students/assignments/${this.props.user._id}`
         try {
             const result = await makeCall({}, endPoint, 'get')
-            if (!result || result.error) {
+            if (result && !result.error) {
+                console.log(result)
                 this.setState({
                     fetching: false,
                     assignments: result.assignments
@@ -64,9 +47,9 @@ export default class StudentView extends Component {
             case PROFILE:
                 return <Profile
                     role={'STUDENT'}
-                    id={this.props.id}
-                    name={this.props.name}
-                    phone={this.props.phone}
+                    id={this.props.user._id}
+                    name={this.props.user.name}
+                    phone={this.props.user.phone}
                 />
             case ASSIGNMENTS:
                 return <Assignments

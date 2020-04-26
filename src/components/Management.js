@@ -44,7 +44,7 @@ export default class Management extends React.Component {
                 if (this.props.isStudentView) {
                     let result = await makeCall({}, `/staff/pending/students`, 'GET');
                     if (result && !result.error) {
-                        const pendingStudents = result.students
+                        const pendingStudents = result.data
                         this.setState({
                             pendingStudents,
                             fetching: false
@@ -57,7 +57,7 @@ export default class Management extends React.Component {
                 } else if (!this.props.isStudentView) {
                     let result = await makeCall({}, '/staff/pending/teachers', 'GET');
                     if (result && !result.error) {
-                        const pendingTeachers = result.teachers
+                        const pendingTeachers = result.data
                         this.setState({
                             pendingTeachers,
                             fetching: false

@@ -14,47 +14,7 @@ export default class TeacherView extends Component {
         this.state = {
             activeItem: COURSES,
             fetching: true,
-            // TODO: remove mock data
-            courses: [
-                {
-                    id: '1',
-                    name: 'Dummy course',
-                    grade: '11th',
-                    assignments: [
-                        {
-                            name: 'First assignment',
-                            submissionLink: 'https://www.google.com',
-                            fileLocation: 'https://www.facebook.com',
-                            date: '20-04-2020'
-                        },
-                        {
-                            name: 'Second assignment',
-                            submissionLink: 'https://www.google.com',
-                            fileLocation: 'https://www.facebook.com',
-                            date: '21-04-2020'
-                        }
-                    ]
-                },
-                {
-                    id: '2',
-                    name: 'Dummy course2',
-                    grade: '9th',
-                    assignments: [
-                        {
-                            name: 'Third assignment',
-                            submissionLink: 'https://www.google.com',
-                            fileLocation: 'https://www.facebook.com',
-                            date: '20-04-2020'
-                        },
-                        {
-                            name: 'Fourth assignment',
-                            submissionLink: 'https://www.google.com',
-                            fileLocation: 'https://www.facebook.com',
-                            date: '21-04-2020'
-                        }
-                    ]
-                }
-            ]
+            courses: []
         }
     }
 
@@ -62,13 +22,13 @@ export default class TeacherView extends Component {
 
     async componentDidMount() {
         this.setState({fetching: true});
-        const endPoint = `/courses/${this.props.id}`
+        const endPoint = `/teachers/courses/${this.props.user._id}`
         try {
             const result = await makeCall({}, endPoint, 'get')
-            if (!result || result.error) {
+            if (result && !result.error) {
                 this.setState({
                     fetching: false,
-                    assignments: result.assignments
+                    courses: result.courses
                 });
             } else {
                 this.setState({
@@ -86,9 +46,9 @@ export default class TeacherView extends Component {
             case PROFILE:
                 return <Profile
                     role={'TEACHER'}
-                    id={this.props.id}
-                    name={this.props.name}
-                    phone={this.props.phone}
+                    id={this.props.user._id}
+                    name={this.props.user.name}
+                    phone={this.props.user.phone}
                 />
             case COURSES:
                 return <Courses

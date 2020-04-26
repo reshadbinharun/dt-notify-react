@@ -28,7 +28,7 @@ export default class Assignments extends Component {
         })
     }
 
-    closeSubmitModal(e) {
+    closeSubmitModal() {
         this.setState({
             openSubmitModal: false
         })

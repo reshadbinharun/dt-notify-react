@@ -41,8 +41,7 @@ export default class Header extends Component {
         })
     }
 
-    closePasswordModal(e) {
-        e.preventDefault();
+    closePasswordModal() {
         this.setState({
             modalOpen: false,
             password: '',

@@ -47,8 +47,7 @@ export default class Courses extends Component {
         });
     }
 
-    closeNewAssignment(e) {
-        e.preventDefault();
+    closeNewAssignment() {
         this.setState({
             openNewAssignment: false
         });
@@ -61,8 +60,7 @@ export default class Courses extends Component {
         });
     }
 
-    closeMessageModal(e) {
-        e.preventDefault();
+    closeMessageModal() {
         this.setState({
             openMessageModal: false
         });

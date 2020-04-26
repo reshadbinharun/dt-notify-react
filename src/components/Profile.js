@@ -93,7 +93,7 @@ export default class Profile extends Component {
                     color="blue" 
                     type='submit'
                     loading={this.state.sendingUpdate}
-                    disabled={!this.state.name || !this.state.name || this.state.sendingUpdate || this.infoHasChanged()}
+                    disabled={!this.state.name || !this.state.phone || this.state.sendingUpdate || !this.infoHasChanged()}
                 >
                     Update Profile Information
                 </Button>

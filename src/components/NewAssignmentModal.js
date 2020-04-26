@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Modal, Button, Form } from 'semantic-ui-react'
 import swal from 'sweetalert';
 import { BACKEND } from "../apis";
+import axios from "axios";
 
 import DatePicker from "react-datepicker";
  
@@ -45,21 +46,23 @@ export default class NewAssignmentModal extends Component {
     }
 
     submitAssignment(e) {
-        // TODO: test this API
+        // TODO: BROKEN: FIX ME BITCH
         this.setState({
             submitting: true
         }, () => {
             let data = new FormData();
             data.append('file', this.state.file);
-            data.append('assignmentName', this.state.assignmentName);
-            data.append('dueDate', this.state.dueDate);
-            data.append('courseId', this.props.courseId);
-            fetch(`${BACKEND}/assignment`, {
-            method: 'POST',
-            headers: {
-              "Content-Type": "multipart/form-data"
-            },
-            body: data
+            data.set('name', this.state.assignmentName);
+            data.set('date', this.state.dueDate);
+            data.set('course', this.props.courseId);
+            for (var key of data.entries()) {
+                console.log(key[0] + ', ' + key[1]);
+            }
+            axios.post(`${BACKEND}/teachers/assignment`, {
+                headers: {
+                "Content-Type": "multipart/form-data"
+                },
+                data: data
           }).then(
             response => response.json()
           ).then(
