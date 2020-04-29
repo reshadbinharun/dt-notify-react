@@ -146,7 +146,7 @@ export default class Management extends React.Component {
             approved: true,
             email: email
         };
-        const endPoint = this.props.isStudentView ? '/approve/student' : '/approve/teachers'
+        const endPoint = '/staff/approve/'
         try {
             const result = await makeCall(payload, endPoint, 'post');
             if (!result || result.error) {
@@ -177,12 +177,9 @@ export default class Management extends React.Component {
 
     async handleReject(email) {
         this.setState({sendingRequest: true});
-        const payload = {
-            email: email
-        };
-        const endPoint = this.props.isStudentView ? '/students/delete' : '/staff/delete'
+        const endPoint = `/staff/${this.props.isStudentView ? 'student' : 'teacher'}/${email}`
         try {
-            const result = await makeCall(payload, endPoint, 'post');
+            const result = await makeCall({}, endPoint, 'delete');
             if (!result || result.error) {
                 this.setState({
                     sendingRequest: false
@@ -191,9 +188,7 @@ export default class Management extends React.Component {
                         title: "Error!",
                         text: `There was an error rejecting the ${this.props.isStudentView ? 'student' : 'staff'}, please try again.`,
                         icon: "error",
-                    }).then(() => {
-                        window.location.reload();
-                    });
+                    })
                 });
             } else {
                 this.setState({
@@ -203,12 +198,19 @@ export default class Management extends React.Component {
                         title: "Success!",
                         text: `You've successfully rejected the ${this.props.isStudentView ? 'student' : 'staff'}!`,
                         icon: "success",
-                    }).then(() => {
-                        window.location.reload();
-                    });
+                    })
                 });
             }
         } catch(e) {
+            this.setState({
+                sendingRequest: false
+            }, () => {
+                swal({
+                    title: "Error!",
+                    text: `There was an error rejecting the ${this.props.isStudentView ? 'student' : 'staff'}, please try again.`,
+                    icon: "error",
+                })
+            });
             console.log("Error: Management#handleReject", e);
         }
     }
@@ -361,7 +363,6 @@ export default class Management extends React.Component {
                             <Grid.Column width={4}>
                                 <Button
                                     onClick={this.handleInvite}
-                                    loading={this.state.sendingRequest}
                                     disabled={!this.state.emailString || this.state.sendingRequest || (this.props.isStudentView && !this.state.gradeToInvite)}
                                 >
                                     <Icon name="paper plane"/>

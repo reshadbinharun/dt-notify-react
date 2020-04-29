@@ -44,13 +44,19 @@ export default class App extends Component {
         this.setState({
           fetchingAuth: false
         });
-        if (result || !result.error) {
+        if (result && !result.error) {
           this.setState({
             loggedIn: true
+          });
+        } else {
+          this.setState({
+            loggedIn: false,
+            fetchingAuth: false,
           });
         }
       } catch (e) {
           this.setState({
+            loggedIn: false,
             fetchingAuth: false,
           });
           console.log("Error: App#componentDidMount", e)

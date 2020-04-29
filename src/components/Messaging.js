@@ -97,6 +97,14 @@ export default class Messaging extends React.Component {
                     });
                 }
             } catch (e) {
+                this.setState({
+                    sending: false
+                }, () => swal({
+                        title: "Error!",
+                        text: "There was an error sending the messages, please try again.",
+                        icon: "error"
+                    })
+                );
                 console.log("Error: Messaging#handleSendMessage", e);
             }
         });
@@ -131,7 +139,7 @@ export default class Messaging extends React.Component {
                             <TextArea 
                                 disabled={this.state.sending}
                                 style={{'margin': '10px 0 10px 0'}}
-                                placeholder='Subject for message...'
+                                placeholder='Enter your message here...'
                                 name="message"
                                 value={this.state.message}
                                 onChange={this.handleChange}

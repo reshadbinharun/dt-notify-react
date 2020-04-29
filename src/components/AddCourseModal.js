@@ -115,6 +115,15 @@ export default class AddCourseModal extends Component {
                 });
             }
         } catch (e) {
+            this.setState({
+                sendingRequest: false,
+            }, () => {
+                swal({
+                    title: "Error!",
+                    text: `There was an error adding the course, please try again.`,
+                    icon: "error",
+                })
+            });
             console.log("Error: AddCourseModal#addCourse", e)
         }
     }

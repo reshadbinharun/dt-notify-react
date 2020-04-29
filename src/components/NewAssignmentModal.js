@@ -9,6 +9,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 /*
     courseId
+    courseName
 */
 export default class NewAssignmentModal extends Component {
     constructor(props) {
@@ -50,38 +51,39 @@ export default class NewAssignmentModal extends Component {
         this.setState({
             submitting: true
         }, () => {
-            let data = new FormData();
-            data.append('file', this.state.file);
-            data.set('name', this.state.assignmentName);
-            data.set('date', this.state.dueDate);
-            data.set('course', this.props.courseId);
-            for (var key of data.entries()) {
-                console.log(key[0] + ', ' + key[1]);
-            }
-            axios.post(`${BACKEND}/teachers/assignment`, {
-                headers: {
-                "Content-Type": "multipart/form-data"
-                },
-                data: data
-          }).then(
-            response => response.json()
-          ).then(
-            success => {
-                swal({
-                    title: "Success!",
-                    text: `You have successfully posted the assignment!`,
-                    icon: "success",
-                }).then(() => {
-                    this.setState({submitting: false})
-                    this.props.close();
-                })
-            }
-          ).catch(
-            error => {
-                this.setState({submitting: false})
-                console.log(error) 
-            }
-          );
+        let data = new FormData();
+        data.append('file', this.state.file);
+        data.set('name', this.state.assignmentName);
+        data.set('date', this.state.dueDate);
+        data.set('course', this.props.courseId);
+        axios({
+            url: `${BACKEND}/teachers/assignment`,
+            method: 'post',
+            headers: {
+            "Content-Type": "multipart/form-data"
+            },
+            data: data
+        }).then(
+            async response => {
+                if (response && response.status === 200) {
+                    swal({
+                        title: "Success!",
+                        text: `You have successfully posted the assignment!`,
+                        icon: "success",
+                    }).then(() => {
+                        this.setState({submitting: false})
+                        this.props.close();
+                    })
+                } else {
+                    swal({
+                        title: "Error!",
+                        text: `There was an error posting your assignment, please try again!`,
+                        icon: "error",
+                    }).then(() => {
+                        this.setState({submitting: false})
+                    })
+                }
+            })
         })
     }
 
@@ -91,7 +93,7 @@ export default class NewAssignmentModal extends Component {
                 open={this.props.open}
             >
                 <Modal.Header>
-                    Post a new assignment
+                    Post a new assignment for {this.props.courseName}
                 </Modal.Header>
                 <Modal.Content>
                     <Form disabled={this.state.submitting}>

@@ -15,7 +15,8 @@ export default class Courses extends Component {
         this.state = {
             openNewAssignment: false,
             openPastAssignments: false,
-            openMessageModal: false
+            openMessageModal: false,
+            course: null
         }
         this.renderCourses = this.renderCourses.bind(this);
         this.openPastAssignments = this.openPastAssignments.bind(this);
@@ -26,10 +27,11 @@ export default class Courses extends Component {
         this.closeMessageModal = this.closeMessageModal.bind(this);
     }
 
-    openPastAssignments(e) {
+    openPastAssignments(e, course) {
         e.preventDefault();
         this.setState({
-            openPastAssignments: true
+            openPastAssignments: true,
+            course
         });
     }
 
@@ -40,10 +42,11 @@ export default class Courses extends Component {
         });
     }
 
-    openNewAssignment(e) {
+    openNewAssignment(e, course) {
         e.preventDefault();
         this.setState({
-            openNewAssignment: true
+            openNewAssignment: true,
+            course
         });
     }
 
@@ -53,10 +56,11 @@ export default class Courses extends Component {
         });
     }
 
-    openMessageModal(e) {
+    openMessageModal(e, course) {
         e.preventDefault();
         this.setState({
-            openMessageModal: true
+            openMessageModal: true,
+            course
         });
     }
 
@@ -70,46 +74,29 @@ export default class Courses extends Component {
         return this.props.courses && this.props.courses.map(course => {
             return (
                 <div>
-                    <MessageCourseModal
-                        open={this.state.openMessageModal}
-                        courseId={course.id}
-                        courseName={course.name}
-                        close={this.closeMessageModal}
-                    />
-                    <AssignmentModal 
-                        open={this.state.openPastAssignments}
-                        courseName={course.name}
-                        assignments={course.assignments}
-                        close={this.closePastAssignments}
-                    />
-                    <NewAssignmentModal 
-                        open={this.state.openNewAssignment}
-                        close={this.closeNewAssignment}
-                        courseId={course.id}
-                    />
                     <Card style ={{'width': '100%'}}>
                         <Card.Content>
                             <Card.Header>
                                 {course.name}
                             </Card.Header>
                             <Card.Meta>
-                                Grade: {course.grade}
+                                Grade: {course.grade}th
                             </Card.Meta>
                         </Card.Content>
                         <Card.Content extra>
                         <div className='ui three buttons'>
                             <Button basic color='brown'
-                                onClick={this.openMessageModal}
+                                onClick={(e) => this.openMessageModal(e, course)}
                             >
                                 Message Class
                             </Button>
                             <Button basic color='brown'
-                                onClick={this.openPastAssignments}
+                                onClick={(e) => this.openPastAssignments(e, course)}
                             >
                                 Past Assignments
                             </Button>
                             <Button basic color='brown'
-                                onClick={this.openNewAssignment}
+                                onClick={(e) => this.openNewAssignment(e, course)}
                             >
                                 Post New Assignment
                             </Button>
@@ -133,6 +120,24 @@ export default class Courses extends Component {
                 {
                     hasCourses ? 
                     <Segment>
+                        <MessageCourseModal
+                            open={this.state.openMessageModal}
+                            courseId={this.state.course && this.state.course._id}
+                            courseName={this.state.course && this.state.course.name}
+                            close={this.closeMessageModal}
+                        />
+                        <AssignmentModal 
+                            open={this.state.openPastAssignments}
+                            courseName={this.state.course && this.state.course.name}
+                            assignments={this.state.course && this.state.course.assignments}
+                            close={this.closePastAssignments}
+                        />
+                        <NewAssignmentModal 
+                            open={this.state.openNewAssignment}
+                            close={this.closeNewAssignment}
+                            courseId={this.state.course && this.state.course._id}
+                            courseName={this.state.course && this.state.course.name}
+                        />
                         {this.renderCourses()}
                     </Segment> : 
                     null 
